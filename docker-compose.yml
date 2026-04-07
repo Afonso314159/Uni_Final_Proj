@@ -1,0 +1,28 @@
+services:
+  web:
+    build: .
+    restart: on-failure
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - .env
+    volumes:
+      - .:/app:z
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: aosjdaonjdaiksndioa
+      MYSQL_DATABASE: django_db_mysql
+      MYSQL_USER: super_user
+      MYSQL_PASSWORD: aosjdaonjdaiksndioa
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
