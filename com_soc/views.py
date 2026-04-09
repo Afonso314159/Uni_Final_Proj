@@ -1,13 +1,24 @@
-from django.shortcuts import render
-
 # Create your views here.
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from django.template import loader
 from .models import Noticia
 from django.contrib.auth.decorators import login_required
+from .forms import RegisterForm
+from django.contrib.auth import login, logout, authenticate
 
 def landing_page(request):
     return render(request, "com_soc/landing_page.html") # A simple page with a "Enter Site" or "Login" button
+
+def register(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request,user)
+            return redirect('/com_soc')
+    else:
+        form = RegisterForm()
+    return render(request, 'registration/register.html', {"form": form})
 
 @login_required
 def home(request):
