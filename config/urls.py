@@ -16,9 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from com_soc import views as com_soc_views
 
 
 urlpatterns = [
+    path('', com_soc_views.landing_page, name='landing_page'),
     path('com_soc/', include('com_soc.urls')),
     path('admin/', admin.site.urls),
+    path('', include('django.contrib.auth.urls')),
 ]

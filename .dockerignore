@@ -1,6 +1,40 @@
-venv
+# Git
+.git/
+.gitignore
+
+# Python
 __pycache__/
 *.pyc
+*.pyo
+*.egg-info/
+
+# Envs — never bake credentials into the image
 .env
 .env*
-db.sqlite3
+venv/
+env/
+
+# Django generated stuff — built at runtime not baked in
+staticfiles/
+media/
+
+# Docker files themselves — no need inside the image
+Dockerfile
+docker-compose*.yml
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+
+# Tests — not needed in production image
+tests/
+
+# Docs
+README*
+*.md

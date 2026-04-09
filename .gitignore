@@ -1,6 +1,35 @@
-venv/
+# Python
 __pycache__/
 *.pyc
-db.sqlite3
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Envs
 .env
 .env*
+.venv
+venv/
+env/
+
+# Django
+db.sqlite3
+media/
+staticfiles/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+
+# Testing
+.coverage
+htmlcov/

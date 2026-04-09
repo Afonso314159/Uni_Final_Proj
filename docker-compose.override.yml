@@ -8,6 +8,9 @@ services:
       - db
     env_file:
       - .env.local
+    volumes:
+      - .:/app:z
+      - staticfiles:/app/staticfiles
 
   db:
     image: mysql:8.0
