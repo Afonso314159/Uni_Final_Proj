@@ -545,7 +545,7 @@
 
 .news-detail-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     margin-bottom: var(--spacing-xl);
 }
@@ -554,9 +554,13 @@
     font-size: 1.75rem;
     color: var(--text-dark);
     font-weight: 700;
+    text-align: center;
+    max-width: 70%;
 }
 
 .back-link {
+    position: absolute;
+    right: 15px;
     display: flex;
     align-items: center;
     gap: var(--spacing-xs);
@@ -638,6 +642,7 @@
     color: var(--text-dark);
     line-height: 1.7;
     font-size: 0.9375rem;
+    margin-bottom: 1.25rem;
 }
 
 /* Comments Section */

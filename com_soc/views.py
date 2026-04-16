@@ -118,10 +118,10 @@ def noticia(request, noticia_id):
     
     if user_is_subscriber:
         back_url = "/com_soc/subscriber"
-        back_label = "Voltar ao Subscritor"
+        back_label = "Voltar"
     else:
         back_url = "/com_soc"
-        back_label = "Voltar ao Início"
+        back_label = "Voltar"
 
     context = {
         "news": noticia,
