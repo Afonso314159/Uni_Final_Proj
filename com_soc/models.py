@@ -79,7 +79,7 @@ class Noticia(models.Model):
         choices=EstadoPublicacao.choices,
         default=EstadoPublicacao.PENDENTE
     )
-    al_score = models.FloatField(null=True, blank=True)
+    ai_score = models.FloatField(null=True, blank=True)
     categoria = models.CharField(max_length=20, choices=CategoriaAcesso.choices)
     categoria_2 = models.CharField(max_length=20, choices=CategoriaPolitica.choices, null=True, blank=True)
     categoria_3 = models.CharField(max_length=20, choices=CategoriaPovo.choices, null=True, blank=True)

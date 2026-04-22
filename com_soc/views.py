@@ -4,15 +4,19 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_POST
 from .models import Noticia, Comentario, ImagemNoticia
 from django.contrib.auth.decorators import login_required
-from .forms import RegisterForm
+from .forms import RegisterForm, NoticiaForm
 from django.contrib.auth import login, logout, authenticate
 from .decorators import admin_required, sub_required, editor_required
 from django.utils import timezone
+from .utils import AI_score
 import json
 
 
 
 def landing_page(request):
+    
+    if request.user.is_authenticated:
+            return redirect('home')
     # Get published news, prioritize ones with images for the featured spot
     all_news = Noticia.objects.filter(
         estado_publicacao=Noticia.EstadoPublicacao.PUBLICADA
@@ -99,8 +103,7 @@ def sub_ad(request):
 
 
 @login_required
-def noticia(request, noticia_id):
-    """News page - minimal placeholder for now"""
+def noticia_detail(request, noticia_id):
 
     noticia = get_object_or_404(Noticia, pk=noticia_id)
 
@@ -115,21 +118,11 @@ def noticia(request, noticia_id):
         comments = noticia.comentarios.filter(
             estado=noticia.comentarios.model.Estado.NORMAL
         ).select_related('utilizador').order_by('-data_post')
-    
-    if user_is_subscriber:
-        back_url = "/com_soc/subscriber"
-        back_label = "Voltar"
-    else:
-        back_url = "/com_soc"
-        back_label = "Voltar"
 
     context = {
         "news": noticia,
         "comments": comments,
         "user_is_subscriber": user_is_subscriber,
-        "page_type": "noticia",
-        "back_url": back_url,
-        "back_label": back_label,
     }
     return render(request, "com_soc/noticia.html", context)
 
@@ -163,24 +156,33 @@ def add_comment(request, noticia_id):
 @require_POST
 @login_required
 def create_noticia(request):
-    """Create a news article. Any logged-in user can submit; goes straight to DB."""
-    titulo = request.POST.get("titulo", "").strip()
-    corpo_texto = request.POST.get("corpo_texto", "").strip()
+    form = NoticiaForm(request.POST)
+    if not form.is_valid():
+        return JsonResponse({"success": False, "error": form.errors}, status=400)
 
-    if not titulo or len(corpo_texto) < 20:
-        return JsonResponse({"success": False, "error": "Título ou descrição inválidos."}, status=400)
+    noticia_obj = form.save(commit=False)
+    noticia_obj.autor = request.user
+    noticia_obj.categoria = Noticia.CategoriaAcesso.PUBLICO
+    noticia_obj.data_criacao = timezone.now().date()
 
-    noticia_obj = Noticia.objects.create(
-        titulo=titulo,
-        corpo_texto=corpo_texto,
-        estado_publicacao=Noticia.EstadoPublicacao.PUBLICADA,
-        data_publicacao=timezone.now().date(),
-        categoria=Noticia.CategoriaAcesso.PUBLICO,
-        autor=request.user,
-        editor_aprovador=request.user,
-    )
+    user_editor_or_admin = (request.user.is_staff or request.user.is_superuser)
+
+    if user_editor_or_admin:
+        noticia_obj.estado_publicacao = Noticia.EstadoPublicacao.PUBLICADA
+        noticia_obj.data_publicacao = timezone.now().date()
+        noticia_obj.editor_aprovador = request.user
+    else:
+        noticia_obj.estado_publicacao = Noticia.EstadoPublicacao.PRE_AI
+        noticia_obj.categoria_3 = Noticia.CategoriaPovo.NOTICIAS_DO_POVO
+
+    noticia_obj.save()
+
+    if not user_editor_or_admin:
+        noticia_obj.ai_score = AI_score(noticia_obj)
+        noticia_obj.estado_publicacao = Noticia.EstadoPublicacao.PENDENTE
+        noticia_obj.save()
 
     for imagem in request.FILES.getlist("imagens"):
         ImagemNoticia.objects.create(noticia=noticia_obj, imagem=imagem)
 
-    return JsonResponse({"success": True, "id": noticia_obj.id})
+    return JsonResponse({"success": True})

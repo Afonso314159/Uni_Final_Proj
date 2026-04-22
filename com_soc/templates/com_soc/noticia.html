@@ -1,101 +1,167 @@
 {% extends "com_soc/base.html" %}
 {% load static %}
-
+ 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'com_soc/css/noticia.css' %}">
+{% endblock %}
+ 
 {% block content %}
 <section class="news-detail">
-    <!-- Header with title and back button -->
-    <div class="news-detail-header">
-        <h1>{{ news.titulo }}</h1>
-        <a href="{{ back_url }}" class="back-link">
+ 
+  <!-- Back bar -->
+  <div class="news-back-bar" style="max-width:900px;margin:0 auto;padding-left:24px;padding-right:24px;">
+    <a href="javascript:history.back()" class="back-link">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      Voltar
+    </a>
+  </div>
+ 
+  <!-- Article header -->
+  <header class="article-header">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap;">
+      {% if news.categoria_2 %}
+      <span class="article-category">{{ news.get_categoria_2_display }}</span>
+      {% endif %}
+      {% if news.categoria_3 %}
+      <span class="article-category">{{ news.get_categoria_3_display }}</span>
+      {% endif %}
+    </div>
+ 
+    <h1 class="article-title">{{ news.titulo }}</h1>
+ 
+    <div class="article-meta">
+      {% if news.autor %}
+      <div class="meta-author">
+        <div class="author-avatar">{{ news.autor.username|first|upper }}</div>
+        <div class="author-info">
+          <div class="author-name">{{ news.autor.get_full_name|default:news.autor.username }}</div>
+          <div class="author-role">Autor</div>
+        </div>
+      </div>
+      <div class="meta-divider"></div>
+      {% endif %}
+ 
+      {% if news.data_publicacao %}
+      <div class="meta-date">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        {{ news.data_publicacao|date:"d \d\e F \d\e Y" }}
+      </div>
+      {% endif %}
+    </div>
+  </header>
+ 
+  <!-- Hero image (first image) -->
+  {% if news.imagens.exists %}
+  {% with news.imagens.first as hero %}
+  <div class="article-hero">
+    <div class="hero-image-wrap">
+      <img src="{{ hero.imagem.url }}" alt="{{ hero.legenda|default:news.titulo }}">
+    </div>
+    {% if hero.legenda %}
+    <p class="hero-caption">{{ hero.legenda }}</p>
+    {% endif %}
+  </div>
+  {% endwith %}
+  {% endif %}
+ 
+  <!-- Article body -->
+  <div class="article-body">
+    {{ news.corpo_texto|linebreaks }}
+  </div>
+ 
+  <!-- Extra gallery images (skip first) -->
+  {% if news.imagens.count > 1 %}
+  <div class="article-gallery">
+    {% for imagem in news.imagens.all %}
+      {% if not forloop.first %}
+      <div class="gallery-item">
+        <img src="{{ imagem.imagem.url }}" alt="{{ imagem.legenda|default:news.titulo }}">
+      </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+ 
+  <!-- Categories footer -->
+    <div class="article-footer">
+    <p class="footer-label">Categorias</p>
+    <div class="tag-list">
+        <span class="tag">{{ news.get_categoria_display }}</span>
+        {% if news.categoria_2 %}
+        <span class="tag">{{ news.get_categoria_2_display }}</span>
+        {% endif %}
+        {% if news.categoria_3 %}
+        <span class="tag">{{ news.get_categoria_3_display }}</span>
+        {% endif %}
+    </div>
+    </div>
+ 
+  <!-- Comments — subscribers only -->
+  {% if user_is_subscriber %}
+  <div class="comments-section" id="comments-section" data-comment-url="{% url 'add_comment' news.id %}">
+    <div class="comments-header">
+      <h2>Comentários</h2>
+      {% if comments %}
+      <span class="comments-count">{{ comments|length }}</span>
+      {% endif %}
+    </div>
+ 
+    <div id="comments-list">
+      {% if comments %}
+        {% for comment in comments %}
+        <div class="comment" id="comment-{{ comment.id }}">
+          <div class="comment-avatar">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
             </svg>
-            {{ back_label }}
-        </a>
-    </div>
-
-    <!-- Images Gallery -->
-    {% if news.imagens.exists %}
-    <div class="news-images">
-        {% for imagem in news.imagens.all %}
-            <div class="news-image-container">
-                <img src="{{ imagem.imagem.url }}" alt="{{ imagem.legenda|default:news.titulo }}">
+          </div>
+          <div class="comment-content">
+            <div class="comment-header">
+              <span class="comment-author">{{ comment.utilizador.username }}</span>
             </div>
+            <div class="comment-body">{{ comment.conteudo }}</div>
+          </div>
+          <div class="comment-actions">
+            <button class="report-btn" title="Reportar comentário" data-comment-id="{{ comment.id }}">!</button>
+          </div>
+        </div>
         {% endfor %}
-    </div>
-    {% endif %}
-
-    <!-- Description Box -->
-    <div class="news-description">
-        <p>{{ news.corpo_texto|linebreaks }}</p>
-    </div>
-
-    <!-- Comments Section - Only for subscribers -->
-    {% if user_is_subscriber %}
-    <div class="comments-section" id="comments-section" data-comment-url="{% url 'add_comment' news.id %}">
-        <div class="comments-header">
-            <h2>Comentários</h2>
+      {% else %}
+        <div class="empty-state" id="no-comments-placeholder">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"/>
+          </svg>
+          <h3>Sem comentários</h3>
+          <p>Seja o primeiro a comentar esta notícia.</p>
         </div>
-
-        <div id="comments-list">
-            {% if comments %}
-                {% for comment in comments %}
-                <div class="comment" id="comment-{{ comment.id }}">
-                    <div class="comment-avatar">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                        </svg>
-                    </div>
-                    <div class="comment-content">
-                        <div class="comment-header">
-                            <span class="comment-author">{{ comment.utilizador.username }}</span>
-                        </div>
-                        <div class="comment-body">
-                            {{ comment.conteudo }}
-                        </div>
-                    </div>
-                    <div class="comment-actions">
-                        <button class="report-btn" title="Reportar comentário" data-comment-id="{{ comment.id }}">!</button>
-                    </div>
-                </div>
-                {% endfor %}
-            {% else %}
-                <div class="empty-state" id="no-comments-placeholder">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
-                    </svg>
-                    <h3>Sem comentários</h3>
-                    <p>Seja o primeiro a comentar esta notícia.</p>
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- Comment input -->
-        <div class="comment-input-row">
-            <div class="comment-avatar">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                </svg>
-            </div>
-            <div class="comment-input-wrap">
-                <textarea
-                    id="comment-input"
-                    class="comment-textarea"
-                    placeholder="Escreva um comentário..."
-                    rows="2"
-                ></textarea>
-                <button id="comment-submit" class="comment-submit-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-                    </svg>
-                </button>
-            </div>
-        </div>
+      {% endif %}
     </div>
-    {% endif %}
+ 
+    <div class="comment-input-row">
+      <div class="comment-avatar">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+        </svg>
+      </div>
+      <div class="comment-input-wrap">
+        <textarea id="comment-input" class="comment-textarea" placeholder="Escreva um comentário..." rows="2"></textarea>
+        <button id="comment-submit" class="comment-submit-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+ 
 </section>
 {% endblock %}
-
+ 
 {% block extra_js %}
 {% load static %}
 {% csrf_token %}
