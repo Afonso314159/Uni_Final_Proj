@@ -1,0 +1,55 @@
+/* ==========================================
+   Subscription Ad Page Styles
+   ========================================== */
+
+.sub-ad-page {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+}
+
+.sub-ad-content {
+    text-align: center;
+    max-width: 500px;
+}
+
+.sub-ad-content svg {
+    width: 80px;
+    height: 80px;
+    color: var(--primary);
+    margin-bottom: var(--spacing-lg);
+}
+
+.sub-ad-content h1 {
+    font-size: 1.75rem;
+    color: var(--text-dark);
+    margin-bottom: var(--spacing-md);
+}
+
+.sub-ad-content p {
+    color: var(--gray-600);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: var(--spacing-xl);
+}
+
+.sub-ad-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: var(--white);
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    box-shadow: var(--shadow-md);
+}
+
+.sub-ad-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}

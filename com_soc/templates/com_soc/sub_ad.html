@@ -1,4 +1,9 @@
 {% extends "com_soc/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'com_soc/css/sub_ad.css' %}">
+{% endblock %}
 
 {% block content %}
 <section class="sub-ad-page">
