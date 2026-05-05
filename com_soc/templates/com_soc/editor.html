@@ -1,0 +1,108 @@
+{% extends "com_soc/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'com_soc/css/editor.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="editor-feed">
+
+    <!-- Pendentes -->
+    <div class="editor-section">
+        <div class="editor-section-header">
+            <h2 class="editor-section-title">Notícias Pendentes</h2>
+            <span class="editor-count">{{ pendentes.count }}</span>
+        </div>
+
+        {% if pendentes %}
+            {% for news in pendentes %}
+            <div class="editor-row" data-id="{{ news.id }}">
+                <a href="{% url 'noticia' news.id %}" class="editor-row-title">{{ news.titulo }}</a>
+                <div class="editor-row-meta">
+                    <span>{{ news.data_criacao|date:"d M Y" }}</span>
+                    {% if news.autor %}<span>{{ news.autor.username }}</span>{% endif %}
+                    {% if news.ai_score %}<span class="editor-ai-score">AI: {{ news.ai_score|floatformat:2 }}</span>{% endif %}
+                </div>
+                <div class="editor-row-actions">
+                    <button class="editor-btn editor-btn--accept" data-id="{{ news.id }}" title="Aceitar">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                    </button>
+                    <button class="editor-btn editor-btn--edit" data-id="{{ news.id }}" title="Editar">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                        </svg>
+                    </button>
+                    <button class="editor-btn editor-btn--delete" data-id="{{ news.id }}" title="Eliminar">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="editor-empty">Sem notícias pendentes.</div>
+        {% endif %}
+    </div>
+
+    <!-- Publicadas -->
+    <div class="editor-section">
+        <div class="editor-section-header">
+            <h2 class="editor-section-title">Notícias Publicadas</h2>
+            <span class="editor-count">{{ publicadas.count }}</span>
+        </div>
+
+        {% if publicadas %}
+            {% for news in publicadas %}
+            <div class="editor-row" data-id="{{ news.id }}">
+                <a href="{% url 'noticia' news.id %}" class="editor-row-title">{{ news.titulo }}</a>
+                <div class="editor-row-meta">
+                    <span>{{ news.data_publicacao|date:"d M Y" }}</span>
+                    {% if news.autor %}<span>{{ news.autor.username }}</span>{% endif %}
+                </div>
+                <div class="editor-row-actions">
+                    <button class="editor-btn editor-btn--edit" data-id="{{ news.id }}" title="Editar">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                        </svg>
+                    </button>
+                    <button class="editor-btn editor-btn--delete" data-id="{{ news.id }}" title="Eliminar">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="editor-empty">Sem notícias publicadas.</div>
+        {% endif %}
+    </div>
+
+</section>
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-modal" class="modal-overlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Eliminar Notícia</h2>
+            <button class="modal-close">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Tens a certeza que queres eliminar esta notícia? Esta ação não pode ser desfeita.</p>
+            <div class="editor-modal-actions">
+                <button id="delete-confirm-btn" class="editor-modal-btn editor-modal-btn--danger">Eliminar</button>
+                <button id="delete-cancel-btn" class="editor-modal-btn editor-modal-btn--secondary modal-close">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

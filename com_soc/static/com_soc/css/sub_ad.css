@@ -1,55 +1,263 @@
 /* ==========================================
-   Subscription Ad Page Styles
+   Subscription Page
    ========================================== */
-
-.sub-ad-page {
+.sub-page {
     flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     padding: var(--spacing-xl);
+    max-width: 860px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-2xl);
 }
 
-.sub-ad-content {
+/* Hero */
+.sub-hero {
     text-align: center;
-    max-width: 500px;
+    padding: var(--spacing-xl) 0 0;
 }
 
-.sub-ad-content svg {
-    width: 80px;
-    height: 80px;
-    color: var(--primary);
-    margin-bottom: var(--spacing-lg);
-}
-
-.sub-ad-content h1 {
-    font-size: 1.75rem;
-    color: var(--text-dark);
+.sub-hero-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: var(--white);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 999px;
     margin-bottom: var(--spacing-md);
 }
 
-.sub-ad-content p {
-    color: var(--gray-600);
-    font-size: 1rem;
-    line-height: 1.6;
-    margin-bottom: var(--spacing-xl);
+.sub-hero-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.2;
 }
 
-.sub-ad-btn {
-    display: inline-flex;
+.sub-hero-subtitle {
+    font-size: 1rem;
+    color: var(--gray-500);
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Features */
+.sub-features {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.sub-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-lg);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.sub-feature:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-sm);
+}
+
+.sub-feature-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-    color: var(--white);
-    padding: var(--spacing-md) var(--spacing-xl);
-    border-radius: var(--radius-lg);
-    font-weight: 600;
-    text-decoration: none;
-    transition: all var(--transition-fast);
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.sub-feature-icon svg {
+    width: 22px;
+    height: 22px;
+    stroke: var(--white);
+    stroke-width: 1.75;
+}
+
+.sub-feature-text h3 {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+}
+
+.sub-feature-text p {
+    font-size: 0.875rem;
+    color: var(--gray-500);
+    line-height: 1.5;
+}
+
+/* Plans */
+.sub-plans {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    align-items: start;
+}
+
+.sub-plan {
+    background: var(--white);
+    border: 1.5px solid var(--gray-100);
+    border-radius: var(--radius-2xl);
+    padding: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    position: relative;
+    transition: box-shadow var(--transition-fast);
+}
+
+.sub-plan:hover {
     box-shadow: var(--shadow-md);
 }
 
-.sub-ad-btn:hover {
+.sub-plan--featured {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px var(--primary), var(--shadow-md);
+}
+
+.sub-plan-badge {
+    position: absolute;
+    top: -13px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+    color: var(--white);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 14px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.sub-plan-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sub-plan-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.sub-plan-price {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.sub-plan-amount {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+.sub-plan-period {
+    font-size: 0.9375rem;
+    color: var(--gray-500);
+}
+
+.sub-plan-saving {
+    font-size: 0.8125rem;
+    color: var(--success-text);
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+.sub-plan-perks {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    list-style: none;
+    padding: 0;
+}
+
+.sub-plan-perks li {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: 0.875rem;
+    color: var(--gray-600);
+}
+
+.sub-plan-perks li svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--success-text);
+    stroke-width: 2.5;
+    flex-shrink: 0;
+}
+
+.sub-plan-btn {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+    border: 2px solid var(--primary);
+    background: transparent;
+    color: var(--primary);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.sub-plan-btn:hover {
+    background: var(--primary);
+    color: var(--white);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 4px 12px rgba(30, 74, 110, 0.25);
+}
+
+.sub-plan-btn--featured {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+    color: var(--white);
+    border-color: transparent;
+}
+
+.sub-plan-btn--featured:hover {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    box-shadow: 0 4px 16px rgba(30, 74, 110, 0.35);
+}
+
+.sub-footer-note {
+    font-size: 0.8125rem;
+    color: var(--gray-300);
+    text-align: center;
+    padding-bottom: var(--spacing-xl);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .sub-plans {
+        grid-template-columns: 1fr;
+    }
+
+    .sub-hero-title {
+        font-size: 1.5rem;
+    }
+
+    .sub-page {
+        padding: var(--spacing-md);
+    }
 }

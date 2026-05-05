@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initSidebar();
     initModals();
     initCreateNews();
+    initEditorPage();
 });
 
 /* ==========================================
@@ -145,10 +146,26 @@ function initCreateNews() {
     const form = document.getElementById('news-create-form');
     if (!form) return;
 
-        // Category chips — max 3
+    const originalAction = form.action;
+
+    // Declare these first
     const chips = document.querySelectorAll('.news-chip');
     const catInputs = ['nc-cat-1', 'nc-cat-2', 'nc-cat-3'].map(id => document.getElementById(id));
     let selectedCats = [];
+
+    // Then define setEditCategories — now chips, catInputs, selectedCats exist
+    window.setEditCategories = function(cats) {
+        selectedCats = [];
+        chips.forEach(chip => {
+            const isSelected = cats.includes(chip.dataset.value);
+            chip.classList.toggle('selected', isSelected);
+            chip.classList.toggle('disabled', !isSelected && cats.length >= 3);
+            if (isSelected) selectedCats.push(chip.dataset.value);
+        });
+        catInputs.forEach((input, i) => {
+            if (input) input.value = selectedCats[i] || '';
+        });
+    };
 
     chips.forEach(chip => {
         chip.addEventListener('click', () => {
@@ -319,22 +336,23 @@ function initCreateNews() {
     }
 
     function resetForm() {
-    form.reset();
-    selectedFiles = [];
-    previewsContainer.innerHTML = '';
-    hideError();
+        form.reset();
+        form.action = originalAction; // restore every time you reset
+        selectedFiles = [];
+        previewsContainer.innerHTML = '';
+        hideError();
 
-    // Reset chips
-    selectedCats = [];
-    chips.forEach(c => c.classList.remove('selected', 'disabled'));
-    catInputs.forEach(i => { if(i) i.value = ''; });
+        // Reset chips
+        selectedCats = [];
+        chips.forEach(c => c.classList.remove('selected', 'disabled'));
+        catInputs.forEach(i => { if(i) i.value = ''; });
 
-    // Reset access toggle
-    document.querySelectorAll('.news-access-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.value === 'publico');
-    });
-    const acesso = document.getElementById('nc-acesso');
-    if (acesso) acesso.value = 'publico';
+        // Reset access toggle
+        document.querySelectorAll('.news-access-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.value === 'publico');
+        });
+        const acesso = document.getElementById('nc-acesso');
+        if (acesso) acesso.value = 'publico';
     }
 }
 

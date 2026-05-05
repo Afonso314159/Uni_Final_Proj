@@ -29,3 +29,5 @@ ujson==5.12.0
 zope.interface==8.2
 whitenoise
 Pillow
+channels==4.0.0
+channels-redis==4.1.0

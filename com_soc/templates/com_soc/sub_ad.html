@@ -6,10 +6,88 @@
 {% endblock %}
 
 {% block content %}
-<section class="sub-ad-page">
-    <div class="sub-ad-content">
-        <h1>Página de Subscrição</h1>
-        <p>Aceda a conteúdo exclusivo, notícias premium e a oportunidade de falar com outros subscrictores.</p>
+<section class="sub-page">
+
+    <!-- Hero -->
+    <div class="sub-hero">
+        <div class="sub-hero-badge">✦ Conteúdo Exclusivo</div>
+        <h1 class="sub-hero-title">Eleva a tua experiência</h1>
+        <p class="sub-hero-subtitle">Acede a notícias exclusivas, comenta em todas as publicações e junta-te à comunidade de subscritores.</p>
     </div>
+
+    <!-- Features -->
+    <div class="sub-features">
+        <div class="sub-feature">
+            <div class="sub-feature-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+                </svg>
+            </div>
+            <div class="sub-feature-text">
+                <h3>Notícias Premium</h3>
+                <p>Acesso ilimitado a todo o conteúdo exclusivo publicado na plataforma.</p>
+            </div>
+        </div>
+        <div class="sub-feature">
+            <div class="sub-feature-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+                </svg>
+            </div>
+            <div class="sub-feature-text">
+                <h3>Comentários em Todas as Notícias</h3>
+                <p>Partilha a tua opinião e interage com a comunidade em qualquer publicação.</p>
+            </div>
+        </div>
+        <div class="sub-feature">
+            <div class="sub-feature-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                </svg>
+            </div>
+            <div class="sub-feature-text">
+                <h3>Chat da Comunidade</h3>
+                <p>Fala em tempo real com outros subscritores na sala de chat exclusiva.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pricing -->
+    <div class="sub-plans">
+
+        <!-- Monthly -->
+        <div class="sub-plan" id="plan-mensal">
+            <div class="sub-plan-header">
+                <h2 class="sub-plan-name">Mensal</h2>
+                <div class="sub-plan-price">
+                    <span class="sub-plan-amount">0,99€</span>
+                    <span class="sub-plan-period">/ mês</span>
+                </div>
+            </div>
+            <button class="sub-plan-btn" onclick="selectPlan('mensal')">Subscrever por 0,99€/mês</button>
+        </div>
+
+        <!-- Annual -->
+        <div class="sub-plan sub-plan--featured" id="plan-anual">
+            <div class="sub-plan-badge">Melhor valor</div>
+            <div class="sub-plan-header">
+                <h2 class="sub-plan-name">Anual</h2>
+                <div class="sub-plan-price">
+                    <span class="sub-plan-amount">9,99€</span>
+                    <span class="sub-plan-period">/ ano</span>
+                </div>
+                <p class="sub-plan-saving">Poupa 1,89€ por ano</p>
+            </div>
+            <button class="sub-plan-btn sub-plan-btn--featured" onclick="selectPlan('anual')">Subscrever por 9,99€/ano</button>
+        </div>
+
+    </div>
+
+    <p class="sub-footer-note">Pagamento seguro. Sem renovação automática surpresa.</p>
+
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'com_soc/js/sub_ad.js' %}"></script>
 {% endblock %}

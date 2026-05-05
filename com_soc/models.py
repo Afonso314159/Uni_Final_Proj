@@ -34,7 +34,6 @@ class Subscricao(models.Model):
     class Estado(models.TextChoices):
         ATIVA = 'Ativa', 'Ativa'
         EXPIRADA = 'Expirada', 'Expirada'
-        SEM_SUBSCRICAO = 'Sem_Subscricao', 'Sem Subscrição'
 
     utilizador = models.ForeignKey(
         Utilizador,
@@ -46,7 +45,6 @@ class Subscricao(models.Model):
     estado = models.CharField(
         max_length=20,
         choices=Estado.choices,
-        default=Estado.SEM_SUBSCRICAO
     )
     preco = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
 

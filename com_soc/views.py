@@ -94,27 +94,66 @@ def sub_ad(request):
     if request.user.role == 'Subscritor':
         return redirect('subscriber')
     context = {
-        "page_type": "sub_ad",
-        "page_title": "Subscrever",
+        'page_type': 'sub_ad',
+        'page_title': 'Subscrição',
     }
     return render(request, "com_soc/sub_ad.html", context)
 
+@editor_required
+def editor(request):
+    pendentes = Noticia.objects.filter(
+        estado_publicacao=Noticia.EstadoPublicacao.PENDENTE,
+    ).order_by("-data_publicacao", "-data_criacao")
+
+    publicadas = Noticia.objects.filter(
+        estado_publicacao=Noticia.EstadoPublicacao.PUBLICADA,
+    ).order_by("-data_publicacao", "-data_criacao")
+    
+    context = {
+        'pendentes': pendentes,
+        'publicadas': publicadas,
+        'page_type': 'editor',
+        'page_title': 'Editor',
+    }
+    return render(request, "com_soc/editor.html", context)
+
+@editor_required
+@require_POST
+def aceitar_noticia(request, id):
+    noticia = get_object_or_404(Noticia, id=id)
+    noticia.estado_publicacao = Noticia.EstadoPublicacao.PUBLICADA
+    noticia.data_publicacao = timezone.now().date()
+    noticia.editor_aprovador = request.user
+    noticia.save()
+    return JsonResponse({'success': True})
+
+@editor_required
+@require_POST
+def eliminar_noticia(request, id):
+    noticia = get_object_or_404(Noticia, id=id)
+    noticia.delete()
+    return JsonResponse({'success': True})
 
 @login_required
 def noticia_detail(request, noticia_id):
 
     noticia = get_object_or_404(Noticia, pk=noticia_id)
 
-    user_is_subscriber = (request.user.role == 'Subscritor' or request.user.is_staff or request.user.is_superuser)
+    user_is_editor = (request.user.is_staff or request.user.is_superuser)
+    user_is_subscriber = (request.user.role == 'Subscritor' or user_is_editor)
 
-    if noticia.acesso == 'Premium':
+    if noticia.acesso == Noticia.Acesso.PREMIUM:
         if not user_is_subscriber:
             return redirect('sub_ad')
+    
+    if noticia.estado_publicacao == Noticia.EstadoPublicacao.PENDENTE:
+        if not user_is_editor:
+            return redirect('home')
     
     comments = []
     if user_is_subscriber:
         comments = noticia.comentarios.filter(
-            estado=noticia.comentarios.model.Estado.NORMAL
+            estado=Comentario.Estado.NORMAL
         ).select_related('utilizador').order_by('-data_post')
 
     context = {
@@ -188,3 +227,29 @@ def create_noticia(request):
         ImagemNoticia.objects.create(noticia=noticia_obj, imagem=imagem)
 
     return JsonResponse({"success": True})
+
+@editor_required
+def noticia_json(request, id):
+    noticia = get_object_or_404(Noticia, pk=id)
+    return JsonResponse({
+        'titulo': noticia.titulo,
+        'corpo_texto': noticia.corpo_texto,
+        'acesso': noticia.acesso,
+        'categoria_1': noticia.categoria_1 or '',
+        'categoria_2': noticia.categoria_2 or '',
+        'categoria_3': noticia.categoria_3 or '',
+        'imagens': [
+            {'url': img.imagem.url, 'id': img.id}
+            for img in noticia.imagens.all()
+        ]
+    })
+
+@editor_required
+@require_POST
+def editar_noticia(request, id):
+    noticia = get_object_or_404(Noticia, pk=id)
+    form = NoticiaForm(request.POST, instance=noticia, is_staff=True)
+    if not form.is_valid():
+        return JsonResponse({'success': False, 'error': form.errors}, status=400)
+    form.save()
+    return JsonResponse({'success': True})

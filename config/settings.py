@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "com_soc.apps.ComSocConfig",
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -139,3 +140,17 @@ LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = 'landing_page'
 
 AUTH_USER_MODEL = 'com_soc.Utilizador'
+
+
+## Chat Room #########
+
+ASGI_APPLICATION = 'config.routing.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('redis', 6379)],
+        },
+    },
+}

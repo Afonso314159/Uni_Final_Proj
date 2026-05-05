@@ -14,7 +14,11 @@
                 <h2 class="news-card-title">{{ news.titulo }}</h2>
                 <p class="news-card-description">{{ news.corpo_texto|truncatewords:30 }}</p>
                 <div class="news-card-meta">
-                    <span class="news-card-badge badge-public">Público</span>
+                    {% if news.acesso == 'premium' %}
+                        <span class="news-card-badge badge-premium">Premium</span>
+                    {% else %}
+                        <span class="news-card-badge badge-public">Público</span>
+                    {% endif %}
                     {% if news.data_publicacao %}
                         <span>{{ news.data_publicacao|date:"d M Y" }}</span>
                     {% endif %}
