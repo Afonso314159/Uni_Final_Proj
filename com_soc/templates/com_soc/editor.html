@@ -12,7 +12,7 @@
     <div class="editor-section">
         <div class="editor-section-header">
             <h2 class="editor-section-title">Notícias Pendentes</h2>
-            <span class="editor-count">{{ pendentes.count }}</span>
+            <span class="editor-count">{{ pendentes|length }}</span>
         </div>
 
         {% if pendentes %}
@@ -22,7 +22,13 @@
                 <div class="editor-row-meta">
                     <span>{{ news.data_criacao|date:"d M Y" }}</span>
                     {% if news.autor %}<span>{{ news.autor.username }}</span>{% endif %}
-                    {% if news.ai_score %}<span class="editor-ai-score">AI: {{ news.ai_score|floatformat:2 }}</span>{% endif %}
+                    {% if news.ai_evaluation %}
+                    <button
+                        class="ai-risk-badge ai-risk-badge--{{ news.ai_evaluation.risk_level }}"
+                        data-evaluation="{{ news._ai_json|escape }}"
+                        title="Ver avaliação AI"
+                    >{{ news.ai_evaluation.risk_level|upper }}</button>
+                    {% endif %}
                 </div>
                 <div class="editor-row-actions">
                     <button class="editor-btn editor-btn--accept" data-id="{{ news.id }}" title="Aceitar">
@@ -52,7 +58,7 @@
     <div class="editor-section">
         <div class="editor-section-header">
             <h2 class="editor-section-title">Notícias Publicadas</h2>
-            <span class="editor-count">{{ publicadas.count }}</span>
+            <span class="editor-count">{{ publicadas|length }}</span>
         </div>
 
         {% if publicadas %}
@@ -101,6 +107,23 @@
                 <button id="delete-confirm-btn" class="editor-modal-btn editor-modal-btn--danger">Eliminar</button>
                 <button id="delete-cancel-btn" class="editor-modal-btn editor-modal-btn--secondary modal-close">Cancelar</button>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Evaluation Modal -->
+<div id="ai-eval-modal" class="modal-overlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Avaliação AI</h2>
+            <button class="modal-close">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        <div class="modal-body" id="ai-eval-content">
+            <!-- populated by editor.js -->
         </div>
     </div>
 </div>

@@ -27,8 +27,6 @@ class Utilizador(AbstractUser):
         default=Estado.POR_ATIVAR
     )
 
-    # username, email, password, date_joined already exist in AbstractUser
-
 
 class Subscricao(models.Model):
     class Estado(models.TextChoices):
@@ -84,7 +82,9 @@ class Noticia(models.Model):
         choices=EstadoPublicacao.choices,
         default=EstadoPublicacao.PENDENTE
     )
-    ai_score = models.FloatField(null=True, blank=True)
+    # Full AI evaluation result stored as JSON.
+    # Structure: { fake_score, abusive_score, risk_level, reasons, recommendation }
+    ai_evaluation = models.JSONField(null=True, blank=True)
     acesso = models.CharField(max_length=20, choices=Acesso.choices)
     categoria_1 = models.CharField(max_length=20, choices=Categoria.choices, null=True, blank=True)
     categoria_2 = models.CharField(max_length=20, choices=Categoria.choices, null=True, blank=True)

@@ -78,16 +78,12 @@
 
 .editor-row-meta {
     display: flex;
+    align-items: center;
     gap: var(--spacing-md);
     font-size: 0.8125rem;
     color: var(--gray-400);
     flex-shrink: 0;
     white-space: nowrap;
-}
-
-.editor-ai-score {
-    color: var(--primary);
-    font-weight: 600;
 }
 
 .editor-row-actions {
@@ -189,6 +185,185 @@
     background: var(--gray-200);
 }
 
+/* ==========================================
+   AI Risk Badge
+   ========================================== */
+.ai-risk-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.15s ease, transform 0.1s ease;
+    line-height: 1.4;
+}
+
+.ai-risk-badge:hover {
+    opacity: 0.82;
+    transform: scale(1.04);
+}
+
+/* size modifier used inside the AI eval modal header */
+.ai-risk-badge--lg {
+    font-size: 0.875rem;
+    padding: 5px 16px;
+    cursor: default;
+}
+.ai-risk-badge--lg:hover {
+    transform: none;
+    opacity: 1;
+}
+
+/* -- colour variants (only low/medium/high ever appear in the pending list) --
+   ideal  → auto-published, never reaches the editor queue
+   trash  → auto-deleted,   never reaches the editor queue           */
+.ai-risk-badge--low {
+    background: #d1fae5;
+    color: #065f46;
+}
+.ai-risk-badge--medium {
+    background: #fef9c3;
+    color: #854d0e;
+}
+.ai-risk-badge--high {
+    background: #ffedd5;
+    color: #9a3412;
+}
+
+/* ==========================================
+   AI Evaluation Modal Content
+   ========================================== */
+.ai-eval-risk-header {
+    display: flex;
+    justify-content: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.ai-eval-scores {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.ai-eval-score-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ai-eval-score-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.ai-eval-score-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.ai-eval-score-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.ai-eval-score-max {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--gray-400);
+}
+
+.ai-eval-bar {
+    height: 8px;
+    background: var(--gray-100);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.ai-eval-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+    /* colour shifts from green → amber → red based on CSS custom property */
+    background: color-mix(
+        in oklch,
+        #ef4444 calc(var(--bar-score, 50) * 1%),
+        #22c55e calc((100 - var(--bar-score, 50)) * 1%)
+    );
+    /* Fallback for browsers without color-mix */
+    background-color: oklch(from hsl(
+        calc(120 - var(--bar-score, 50) * 1.2),
+        70%, 50%
+    ) l c h);
+}
+
+/* Safe fallback for older browsers that don't support color-mix / oklch */
+@supports not (background: color-mix(in oklch, red, green)) {
+    .ai-eval-bar-fill {
+        background: var(--primary);
+    }
+}
+
+.ai-eval-section {
+    margin-top: var(--spacing-md);
+}
+
+.ai-eval-section-title {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--gray-400);
+    margin-bottom: var(--spacing-xs);
+}
+
+.ai-eval-reasons {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ai-eval-reasons li {
+    font-size: 0.875rem;
+    color: var(--text-dark);
+    padding-left: 1.1em;
+    position: relative;
+    line-height: 1.45;
+}
+
+.ai-eval-reasons li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--gray-400);
+    font-weight: 700;
+}
+
+.ai-eval-recommendation {
+    font-size: 0.875rem;
+    color: var(--text-dark);
+    background: var(--gray-50);
+    border-left: 3px solid var(--primary);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* ==========================================
+   Responsive
+   ========================================== */
 @media (max-width: 640px) {
     .editor-row-meta {
         display: none;
