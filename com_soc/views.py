@@ -114,9 +114,9 @@ def editor(request):
     # Serialize ai_evaluation to a JSON string so templates can embed it
     # safely in data attributes via the |escape filter.
     for news in pendentes:
-        news._ai_json = json.dumps(news.ai_evaluation) if news.ai_evaluation else ''
+        news.ai_json = json.dumps(news.ai_evaluation) if news.ai_evaluation else ''
     for news in publicadas:
-        news._ai_json = json.dumps(news.ai_evaluation) if news.ai_evaluation else ''
+        news.ai_json = json.dumps(news.ai_evaluation) if news.ai_evaluation else ''
 
     context = {
         'pendentes': pendentes,
