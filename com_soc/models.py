@@ -27,6 +27,14 @@ class Utilizador(AbstractUser):
         default=Estado.POR_ATIVAR
     )
 
+    email = models.EmailField(unique=True)
+    profile_picture = models.ImageField(upload_to='avatars/', null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if self.is_staff or self.is_superuser:
+            self.estado = self.Estado.ATIVADA
+        super().save(*args, **kwargs)
+
 
 class Subscricao(models.Model):
     class Estado(models.TextChoices):
@@ -145,6 +153,10 @@ class Notificacao(models.Model):
     class Estado(models.TextChoices):
         NORMAL = 'Normal', 'Normal'
         APAGADA = 'Apagada', 'Apagada'
+    
+    class Read(models.TextChoices):
+        VISTA = 'Vista', 'Vista'
+        POR_VER = 'Por_Ver', 'Por Ver'
 
     utilizador = models.ForeignKey(
         Utilizador,
@@ -156,6 +168,11 @@ class Notificacao(models.Model):
         max_length=20,
         choices=Estado.choices,
         default=Estado.NORMAL
+    )
+    read = models.CharField(
+        max_length=20,
+        choices=Read.choices,
+        default=Read.POR_VER
     )
     timestamp = models.DateTimeField(auto_now_add=True)
 

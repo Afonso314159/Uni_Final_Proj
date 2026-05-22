@@ -9,6 +9,12 @@ class RegisterForm(UserCreationForm):
         model = Utilizador
         fields = ["username","email","password1","password2"]
 
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if Utilizador.objects.filter(email=email).exists():
+            raise forms.ValidationError('Já existe uma conta com este email.')
+        return email
+
 class NoticiaForm(forms.ModelForm):
     class Meta:
         model = Noticia

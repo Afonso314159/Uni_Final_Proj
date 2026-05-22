@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conta Bloqueada - ENIDH Comunicação Social</title>
+    <link rel="stylesheet" href="{% static 'com_soc/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'com_soc/css/auth.css' %}">
+</head>
+<body class="auth-page">
+    <header>
+        <a href="{% url 'landing_page' %}" class="logo">ENIDH - <span>Comunicação Social</span></a>
+        <a href="{% url 'landing_page' %}" class="back-btn">← Voltar</a>
+    </header>
+
+    <main class="auth-main">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-icon auth-icon--error">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                    </svg>
+                </div>
+                <h1 class="auth-title">Conta indisponível</h1>
+                <p class="auth-subtitle">A tua conta foi bloqueada ou eliminada. Se achas que isto é um erro contacta o suporte.</p>
+                <p><a href="{% url 'register' %}" class="auth-btn">Criar nova conta</a></p>
+                <p><a href="{% url 'login' %}" class="auth-btn">Login com outra conta</a></p>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

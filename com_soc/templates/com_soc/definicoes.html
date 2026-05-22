@@ -1,0 +1,139 @@
+{% extends "com_soc/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'com_soc/css/definicoes.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="settings-page">
+
+    <div class="settings-header">
+        <h1 class="settings-title">Definições</h1>
+    </div>
+
+    <!-- ===================== Aparência ===================== -->
+    <div class="settings-section">
+        <h2 class="settings-section-title">Aparência</h2>
+
+        <div class="settings-row">
+            <div class="settings-row-info">
+                <span class="settings-row-label">Tema</span>
+                <span class="settings-row-desc">Alterna entre modo claro e escuro</span>
+            </div>
+            <div class="settings-toggle" id="theme-toggle">
+                <button class="settings-toggle-btn active" data-value="light">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                    </svg>
+                    Claro
+                </button>
+                <button class="settings-toggle-btn" data-value="dark">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+                    </svg>
+                    Escuro
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== Idioma ===================== -->
+    <div class="settings-section">
+        <h2 class="settings-section-title">Idioma</h2>
+
+        <div class="settings-row">
+            <div class="settings-row-info">
+                <span class="settings-row-label">Língua da interface</span>
+                <span class="settings-row-desc">Alterna entre português e inglês</span>
+            </div>
+            <div class="settings-toggle" id="language-toggle">
+                <button class="settings-toggle-btn active" data-value="pt">
+                    🇵🇹 Português
+                </button>
+                <button class="settings-toggle-btn" data-value="en">
+                    🇬🇧 English
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== Moderação AI (admin only) ===================== -->
+    {% if request.user.is_superuser %}
+    <div class="settings-section settings-section--admin">
+
+        <div class="settings-section-title-row">
+            <h2 class="settings-section-title">Moderação AI</h2>
+            <span class="settings-admin-badge">Admin</span>
+        </div>
+        <p class="settings-section-desc">
+            Define os limiares que classificam o nível de risco de cada artigo submetido.
+            Os valores aplicam-se a ambas as pontuações (fake e abusivo).
+        </p>
+
+        <div class="settings-ai-grid">
+
+            <div class="settings-ai-row">
+                <div class="settings-ai-info">
+                    <span class="settings-ai-badge settings-ai-badge--ideal">IDEAL</span>
+                    <span class="settings-ai-rule">Ambas as pontuações igual a 0 — publicação automática</span>
+                </div>
+                <span class="settings-ai-fixed">Fixo</span>
+            </div>
+
+            <div class="settings-ai-row">
+                <div class="settings-ai-info">
+                    <span class="settings-ai-badge settings-ai-badge--low">BAIXO</span>
+                    <span class="settings-ai-rule">Ambas abaixo de</span>
+                </div>
+                <div class="settings-ai-input-wrap">
+                    <input type="number" class="settings-ai-input" name="low_threshold" value="20" min="1" max="99">
+                    <span class="settings-ai-unit">/ 100</span>
+                </div>
+            </div>
+
+            <div class="settings-ai-row">
+                <div class="settings-ai-info">
+                    <span class="settings-ai-badge settings-ai-badge--medium">MÉDIO</span>
+                    <span class="settings-ai-rule">Ambas abaixo de</span>
+                </div>
+                <div class="settings-ai-input-wrap">
+                    <input type="number" class="settings-ai-input" name="medium_threshold" value="40" min="1" max="99">
+                    <span class="settings-ai-unit">/ 100</span>
+                </div>
+            </div>
+
+            <div class="settings-ai-row">
+                <div class="settings-ai-info">
+                    <span class="settings-ai-badge settings-ai-badge--high">ALTO</span>
+                    <span class="settings-ai-rule">Ambas abaixo de</span>
+                </div>
+                <div class="settings-ai-input-wrap">
+                    <input type="number" class="settings-ai-input" name="high_threshold" value="70" min="1" max="99">
+                    <span class="settings-ai-unit">/ 100</span>
+                </div>
+            </div>
+
+            <div class="settings-ai-row">
+                <div class="settings-ai-info">
+                    <span class="settings-ai-badge settings-ai-badge--trash">LIXO</span>
+                    <span class="settings-ai-rule">Qualquer pontuação acima do limiar alto — rejeição automática</span>
+                </div>
+                <span class="settings-ai-fixed">Automático</span>
+            </div>
+
+        </div>
+
+        <div class="settings-save-row">
+            <button class="settings-save-btn" id="save-ai-thresholds">Guardar limiares</button>
+        </div>
+
+    </div>
+    {% endif %}
+
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'com_soc/js/definicoes.js' %}"></script>
+{% endblock %}

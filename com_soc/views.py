@@ -1,18 +1,27 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-from .models import Noticia, Comentario, ImagemNoticia
 from django.contrib.auth.decorators import login_required
-from .forms import RegisterForm, NoticiaForm
-from django.contrib.auth import login, logout, authenticate
-from .decorators import admin_required, sub_required, editor_required
+from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.utils import timezone
-from .utils import AI_score
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
+from django.core.paginator import Paginator  
+from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.core.exceptions import ValidationError
+
+from .models import Noticia, Comentario, ImagemNoticia, Utilizador, Notificacao
+from .forms import RegisterForm, NoticiaForm
+from .decorators import admin_required, sub_required, editor_required, authenticated_user
+from .utils import AI_score, email_verification_token, send_verification_email
 import json
 
 
-def landing_page(request):
+# ---------------------------------------------------------------------------
+# Landing & Auth
+# ---------------------------------------------------------------------------
 
+def landing_page(request):
     if request.user.is_authenticated:
         return redirect('home')
 
@@ -46,47 +55,171 @@ def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('/com_soc')
+            user = form.save(commit=False)
+            user.is_active = False          # block login until email verified
+            user.save()
+            try:
+                send_verification_email(request, user)
+            except Exception:
+                # Email failed to send — delete the user so they can try again
+                user.delete()
+                form.add_error(None, 'Não foi possível enviar o email de verificação. Tenta novamente.')
+                return render(request, 'registration/register.html', {"form": form})
+            return render(request, 'registration/verification_sent.html', {'email': user.email})
     else:
         form = RegisterForm()
     return render(request, 'registration/register.html', {"form": form})
 
 
-@login_required
-def home(request):
-    news_list = Noticia.objects.filter(
-        estado_publicacao=Noticia.EstadoPublicacao.PUBLICADA,
-        acesso=Noticia.Acesso.PUBLICO
-    ).order_by("-data_publicacao", "-data_criacao")
+def verify_email(request, uidb64, token):
+    """
+    Handles the one-time email verification link.
+    On success: activates the account, logs the user in, redirects to home.
+    On failure: shows an invalid/expired link page.
+    """
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = Utilizador.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, Utilizador.DoesNotExist):
+        user = None
 
+    if user is not None and email_verification_token.check_token(user, token):
+        user.is_active = True
+        user.estado = Utilizador.Estado.ATIVADA
+        user.save()
+        login(request, user)
+        return redirect('home')
+
+    return render(request, 'registration/verification_invalid.html')
+
+def verification_pending(request):
+    return render(request, 'registration/verification_sent.html')
+
+def account_blocked(request):
+    return render(request, 'registration/account_blocked.html')
+
+
+# ---------------------------------------------------------------------------
+# Main pages
+# ---------------------------------------------------------------------------
+
+CATEGORIES = Noticia.Categoria.choices
+NEWS_PER_PAGE = 10
+
+@authenticated_user
+def home(request):
+    qs = Noticia.objects.filter(
+        estado_publicacao=Noticia.EstadoPublicacao.PUBLICADA,
+        acesso=Noticia.Acesso.PUBLICO,
+    ).order_by("-data_publicacao", "-data_criacao")
+ 
+    # ---- filters ----
+    q          = request.GET.get("q", "")
+    date_from  = request.GET.get("date_from", "").strip()
+    date_to    = request.GET.get("date_to", "").strip()
+    cats       = request.GET.getlist("cat")          # up to 3 values
+    cats       = [c for c in cats if c]              # drop empties
+ 
+    if q.strip():
+        qs = qs.filter(titulo__icontains=q.strip())
+    if date_from:
+        qs = qs.filter(data_publicacao__gte=date_from)
+    if date_to:
+        qs = qs.filter(data_publicacao__lte=date_to)
+    if cats:
+        from django.db.models import Q
+        cat_q = Q()
+        for c in cats:
+            cat_q |= Q(categoria_1=c) | Q(categoria_2=c) | Q(categoria_3=c)
+        qs = qs.filter(cat_q)
+ 
+    filter_active = bool(q.strip() or date_from or date_to or cats)
+ 
+    # ---- pagination ----
+    paginator   = Paginator(qs, NEWS_PER_PAGE)
+    page_number = request.GET.get("page", 1)
+    page_obj    = paginator.get_page(page_number)
+ 
     context = {
-        "news_list": news_list,
-        "page_type": "home",
-        "page_title": "Notícias Públicas",
-        "page_subtitle": "Últimas notícias de acesso público",
+        "news_list":           page_obj,
+        "page_obj":            page_obj,
+        "page_type":           "home",
+        "page_title":          "Notícias Públicas",
+        "page_subtitle":       "Últimas notícias de acesso público",
+        # filter state — sent back so inputs stay filled
+        "filter_q":            q,
+        "filter_date_from":    date_from,
+        "filter_date_to":      date_to,
+        "filter_cats":         cats,
+        "filter_active":       filter_active,
+        "categories":          CATEGORIES,
     }
     return render(request, "com_soc/home.html", context)
-
-
+ 
+ 
+@authenticated_user
 @sub_required
 def subscriber(request):
-    news_list = Noticia.objects.filter(
-        estado_publicacao=Noticia.EstadoPublicacao.PUBLICADA,
-        acesso=Noticia.Acesso.PREMIUM
-    ).order_by("-data_publicacao", "-data_criacao")
-
+    # start with premium only; optionally include public
+    include_public = request.GET.get("include_public") == "1"
+ 
+    if include_public:
+        qs = Noticia.objects.filter(
+            estado_publicacao=Noticia.EstadoPublicacao.PUBLICADA,
+        )
+    else:
+        qs = Noticia.objects.filter(
+            estado_publicacao=Noticia.EstadoPublicacao.PUBLICADA,
+            acesso=Noticia.Acesso.PREMIUM,
+        )
+ 
+    qs = qs.order_by("-data_publicacao", "-data_criacao")
+ 
+    # ---- filters ----
+    q          = request.GET.get("q", "")
+    date_from  = request.GET.get("date_from", "").strip()
+    date_to    = request.GET.get("date_to", "").strip()
+    cats       = request.GET.getlist("cat")
+    cats       = [c for c in cats if c]
+ 
+    if q.strip():
+        qs = qs.filter(titulo__icontains=q.strip())
+    if date_from:
+        qs = qs.filter(data_publicacao__gte=date_from)
+    if date_to:
+        qs = qs.filter(data_publicacao__lte=date_to)
+    if cats:
+        from django.db.models import Q
+        cat_q = Q()
+        for c in cats:
+            cat_q |= Q(categoria_1=c) | Q(categoria_2=c) | Q(categoria_3=c)
+        qs = qs.filter(cat_q)
+ 
+    filter_active = bool(q.strip() or date_from or date_to or cats or include_public)
+ 
+    # ---- pagination ----
+    paginator   = Paginator(qs, NEWS_PER_PAGE)
+    page_number = request.GET.get("page", 1)
+    page_obj    = paginator.get_page(page_number)
+ 
     context = {
-        "news_list": news_list,
-        "page_type": "subscriber",
-        "page_title": "Notícias Exclusivas",
-        "page_subtitle": "Conteúdo exclusivo para subscritores",
+        "news_list":            page_obj,
+        "page_obj":             page_obj,
+        "page_type":            "subscriber",
+        "page_title":           "Notícias Exclusivas",
+        "page_subtitle":        "Conteúdo exclusivo para subscritores",
+        # filter state
+        "filter_q":             q,
+        "filter_date_from":     date_from,
+        "filter_date_to":       date_to,
+        "filter_cats":          cats,
+        "filter_include_public": include_public,
+        "filter_active":        filter_active,
+        "categories":           CATEGORIES,
     }
     return render(request, "com_soc/subscriber.html", context)
 
-
-@login_required
+@authenticated_user
 def sub_ad(request):
     if request.user.role == 'Subscritor':
         return redirect('subscriber')
@@ -96,7 +229,67 @@ def sub_ad(request):
     }
     return render(request, "com_soc/sub_ad.html", context)
 
+@authenticated_user
+def notifications(request):
+    notifications_list = Notificacao.objects.filter(
+        utilizador=request.user,
+        estado=Notificacao.Estado.NORMAL
+    ).order_by("-timestamp")
 
+    context = {
+        "notifications_list": notifications_list,
+        'page_type': 'notifications',
+        'page_title': 'Notificacoes',
+    }
+    return render(request, "com_soc/notification.html", context)
+
+@authenticated_user
+def definicoes(request):
+    context = {
+        'page_type': 'definicoes',
+        'page_title': 'Definições',
+    }
+    return render(request, "com_soc/definicoes.html", context)
+ 
+
+# -----------------------------------------------------------------------
+# Notifications actions
+# -----------------------------------------------------------------------
+ 
+@require_POST
+@authenticated_user
+def delete_notification(request, id):
+    notif = get_object_or_404(Notificacao, id=id, utilizador=request.user)
+    notif.estado = Notificacao.Estado.APAGADA
+    notif.save()
+    return JsonResponse({'success': True})
+ 
+ 
+@require_POST
+@authenticated_user
+def delete_all_notifications(request):
+    Notificacao.objects.filter(
+        utilizador=request.user,
+        estado=Notificacao.Estado.NORMAL
+    ).update(estado=Notificacao.Estado.APAGADA)
+    return JsonResponse({'success': True})
+ 
+ 
+@require_POST
+@authenticated_user
+def mark_notifications_read(request):
+    Notificacao.objects.filter(
+        utilizador=request.user,
+        estado=Notificacao.Estado.NORMAL,
+        read=Notificacao.Read.POR_VER
+    ).update(read=Notificacao.Read.VISTA)
+    return JsonResponse({'success': True})
+
+# ---------------------------------------------------------------------------
+# Editor
+# ---------------------------------------------------------------------------
+
+@authenticated_user
 @editor_required
 def editor(request):
     pendentes = list(
@@ -104,15 +297,12 @@ def editor(request):
             estado_publicacao=Noticia.EstadoPublicacao.PENDENTE,
         ).order_by("-data_publicacao", "-data_criacao")
     )
-
     publicadas = list(
         Noticia.objects.filter(
             estado_publicacao=Noticia.EstadoPublicacao.PUBLICADA,
         ).order_by("-data_publicacao", "-data_criacao")
     )
 
-    # Serialize ai_evaluation to a JSON string so templates can embed it
-    # safely in data attributes via the |escape filter.
     for news in pendentes:
         news.ai_json = json.dumps(news.ai_evaluation) if news.ai_evaluation else ''
     for news in publicadas:
@@ -126,9 +316,9 @@ def editor(request):
     }
     return render(request, "com_soc/editor.html", context)
 
-
-@editor_required
 @require_POST
+@authenticated_user
+@editor_required
 def aceitar_noticia(request, id):
     noticia = get_object_or_404(Noticia, id=id)
     noticia.estado_publicacao = Noticia.EstadoPublicacao.PUBLICADA
@@ -137,29 +327,31 @@ def aceitar_noticia(request, id):
     noticia.save()
     return JsonResponse({'success': True})
 
-
-@editor_required
 @require_POST
+@authenticated_user
+@editor_required
 def eliminar_noticia(request, id):
     noticia = get_object_or_404(Noticia, id=id)
     noticia.delete()
     return JsonResponse({'success': True})
 
 
-@login_required
+# ---------------------------------------------------------------------------
+# News detail & comments
+# ---------------------------------------------------------------------------
+
+@authenticated_user
 def noticia_detail(request, noticia_id):
     noticia = get_object_or_404(Noticia, pk=noticia_id)
 
     user_is_editor = (request.user.is_staff or request.user.is_superuser)
     user_is_subscriber = (request.user.role == 'Subscritor' or user_is_editor)
 
-    if noticia.acesso == Noticia.Acesso.PREMIUM:
-        if not user_is_subscriber:
-            return redirect('sub_ad')
+    if noticia.acesso == Noticia.Acesso.PREMIUM and not user_is_subscriber:
+        return redirect('sub_ad')
 
-    if noticia.estado_publicacao == Noticia.EstadoPublicacao.PENDENTE:
-        if not user_is_editor:
-            return redirect('home')
+    if noticia.estado_publicacao == Noticia.EstadoPublicacao.PENDENTE and not user_is_editor:
+        return redirect('home')
 
     comments = []
     if user_is_subscriber:
@@ -174,8 +366,8 @@ def noticia_detail(request, noticia_id):
     }
     return render(request, "com_soc/noticia.html", context)
 
-
 @require_POST
+@authenticated_user
 @sub_required
 def add_comment(request, noticia_id):
     noticia_obj = get_object_or_404(Noticia, pk=noticia_id)
@@ -189,7 +381,6 @@ def add_comment(request, noticia_id):
         utilizador=request.user,
         conteudo=conteudo,
     )
-
     return JsonResponse({
         "success": True,
         "comment": {
@@ -200,8 +391,12 @@ def add_comment(request, noticia_id):
     })
 
 
+# ---------------------------------------------------------------------------
+# Create & edit news
+# ---------------------------------------------------------------------------
+
 @require_POST
-@login_required
+@authenticated_user
 def create_noticia(request):
     form = NoticiaForm(request.POST, is_staff=request.user.is_staff or request.user.is_superuser)
     if not form.is_valid():
@@ -218,13 +413,11 @@ def create_noticia(request):
     user_editor_or_admin = (request.user.is_staff or request.user.is_superuser)
 
     if user_editor_or_admin:
-        # Editors and admins bypass AI review entirely
         noticia_obj.estado_publicacao = Noticia.EstadoPublicacao.PUBLICADA
         noticia_obj.data_publicacao = timezone.now().date()
         noticia_obj.editor_aprovador = request.user
         noticia_obj.save()
     else:
-        # Regular users: run through AI moderation pipeline
         noticia_obj.estado_publicacao = Noticia.EstadoPublicacao.PRE_AI
         noticia_obj.origem_noticia = Noticia.OrigemNoticia.NOTICIAS_DO_POVO
         noticia_obj.acesso = Noticia.Acesso.PUBLICO
@@ -235,7 +428,6 @@ def create_noticia(request):
         risk_level = evaluation.get('risk_level', 'medium')
 
         if risk_level == 'trash':
-            # Content is too harmful / low quality — reject immediately, no review needed
             noticia_obj.delete()
             return JsonResponse({
                 "success": False,
@@ -245,14 +437,10 @@ def create_noticia(request):
                     "os critérios mínimos de qualidade e/ou conter conteúdo impróprio."
                 ),
             })
-
         elif risk_level == 'ideal':
-            # Both scores are 0 — auto-publish, no human review needed
             noticia_obj.estado_publicacao = Noticia.EstadoPublicacao.PUBLICADA
             noticia_obj.data_publicacao = timezone.now().date()
-
         else:
-            # low / medium / high — send to editor queue for human review
             noticia_obj.estado_publicacao = Noticia.EstadoPublicacao.PENDENTE
 
         noticia_obj.save()
@@ -262,7 +450,7 @@ def create_noticia(request):
 
     return JsonResponse({"success": True})
 
-
+@authenticated_user
 @editor_required
 def noticia_json(request, id):
     noticia = get_object_or_404(Noticia, pk=id)
@@ -280,13 +468,121 @@ def noticia_json(request, id):
         ],
     })
 
-
-@editor_required
 @require_POST
+@authenticated_user
+@editor_required
 def editar_noticia(request, id):
     noticia = get_object_or_404(Noticia, pk=id)
     form = NoticiaForm(request.POST, instance=noticia, is_staff=True)
     if not form.is_valid():
         return JsonResponse({'success': False, 'error': form.errors}, status=400)
     form.save()
+    return JsonResponse({'success': True})
+
+
+# -----------------------------------------------------------------------
+# Account views — add to views.py
+# -----------------------------------------------------------------------
+ 
+@authenticated_user
+def account(request):
+    active_sub = (
+        request.user.subscricoes
+        .filter(estado='Ativa')
+        .order_by('-data_fim')
+        .first()
+    )
+    days_member = (timezone.now().date() - request.user.date_joined.date()).days
+ 
+    context = {
+        'page_type': 'account',
+        'page_title': 'Minha Conta',
+        'active_sub': active_sub,
+        'days_member': days_member,
+        'categoria_choices': Noticia.Categoria.choices,
+    }
+    return render(request, 'com_soc/account.html', context)
+ 
+ 
+@require_POST
+@authenticated_user
+def update_avatar(request):
+    picture = request.FILES.get('profile_picture')
+ 
+    if not picture:
+        return JsonResponse({'success': False, 'error': 'Nenhuma imagem recebida.'}, status=400)
+ 
+    allowed_types = ('image/jpeg', 'image/png', 'image/gif', 'image/webp')
+    if picture.content_type not in allowed_types:
+        return JsonResponse({'success': False, 'error': 'Tipo de ficheiro não suportado.'}, status=400)
+ 
+    if picture.size > 5 * 1024 * 1024:
+        return JsonResponse({'success': False, 'error': 'A imagem não pode exceder 5 MB.'}, status=400)
+ 
+    user = request.user
+    if user.profile_picture:
+        try:
+            user.profile_picture.delete(save=False)
+        except Exception:
+            pass
+ 
+    user.profile_picture = picture
+    user.save(update_fields=['profile_picture'])
+ 
+    return JsonResponse({'success': True, 'url': user.profile_picture.url})
+ 
+ 
+@require_POST
+@authenticated_user
+def update_username(request):
+    new_username = request.POST.get('username', '').strip()
+ 
+    if not new_username:
+        return JsonResponse({'success': False, 'error': 'O nome não pode estar vazio.'}, status=400)
+ 
+    if len(new_username) < 3:
+        return JsonResponse({'success': False, 'error': 'Mínimo 3 caracteres.'}, status=400)
+ 
+    validator = UnicodeUsernameValidator()
+    try:
+        validator(new_username)
+    except ValidationError as e:
+        return JsonResponse({'success': False, 'error': e.messages[0]}, status=400)
+ 
+    if (
+        Utilizador.objects
+        .filter(username__iexact=new_username)
+        .exclude(pk=request.user.pk)
+        .exists()
+    ):
+        return JsonResponse({'success': False, 'error': 'Este nome de utilizador já está em uso.'}, status=400)
+ 
+    request.user.username = new_username
+    request.user.save(update_fields=['username'])
+ 
+    return JsonResponse({'success': True})
+ 
+ 
+@require_POST
+@authenticated_user
+def change_password(request):
+    current_pw = request.POST.get('current_password', '')
+    new_pw = request.POST.get('new_password', '')
+ 
+    if not request.user.check_password(current_pw):
+        return JsonResponse({'success': False, 'error': 'A palavra-passe atual está incorreta.'}, status=400)
+ 
+    if len(new_pw) < 8:
+        return JsonResponse({'success': False, 'error': 'A nova palavra-passe deve ter pelo menos 8 caracteres.'}, status=400)
+ 
+    if not any(c.isupper() for c in new_pw):
+        return JsonResponse({'success': False, 'error': 'A nova palavra-passe deve conter pelo menos uma letra maiúscula.'}, status=400)
+ 
+    if not any(c.isdigit() for c in new_pw):
+        return JsonResponse({'success': False, 'error': 'A nova palavra-passe deve conter pelo menos um número.'}, status=400)
+ 
+    request.user.set_password(new_pw)
+    request.user.save()
+    update_session_auth_hash(request, request.user)
+ 
     return JsonResponse({'success': True})

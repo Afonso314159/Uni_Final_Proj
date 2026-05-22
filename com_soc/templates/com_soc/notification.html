@@ -1,0 +1,56 @@
+{% extends "com_soc/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'com_soc/css/notifications.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="notif-page">
+
+    <div class="notif-header">
+        <div class="notif-header-left">
+            <h1 class="notif-title">Notificações</h1>
+            {% if notifications_list %}
+            <span class="notif-count">{{ notifications_list|length }}</span>
+            {% endif %}
+        </div>
+        {% if notifications_list %}
+        <button class="notif-delete-all-btn" id="delete-all-btn">
+            Apagar todas
+        </button>
+        {% endif %}
+    </div>
+
+    {% if notifications_list %}
+    <div class="notif-list" id="notif-list">
+        {% for notif in notifications_list %}
+        <div class="notif-item {% if notif.read == 'Por_Ver' %}notif-item--unread{% endif %}" data-id="{{ notif.id }}">
+            <div class="notif-bar"></div>
+            <div class="notif-body">
+                <p class="notif-text">{{ notif.conteudo }}</p>
+                <span class="notif-time">{{ notif.timestamp|date:"d M Y, H:i" }}</span>
+            </div>
+            <button class="notif-delete-btn" data-id="{{ notif.id }}" title="Apagar notificação">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="notif-empty" id="notif-empty">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+        </svg>
+        <p>Não tens notificações.</p>
+    </div>
+    {% endif %}
+
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'com_soc/js/notifications.js' %}"></script>
+{% endblock %}
