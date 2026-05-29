@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initAvatarUpload();
     initUsernameEdit();
     initPasswordModal();
+    initCancelSubscription();
 });
 
 /* ==========================================
@@ -337,9 +338,51 @@ function showToast(message, type = 'success') {
 }
 
 /* ==========================================
-   Utility
+   Cancel Subscription
    ========================================== */
-function getCsrf() {
-    const cookie = document.cookie.split(';').find(c => c.trim().startsWith('csrftoken='));
-    return cookie ? cookie.trim().split('=')[1] : '';
+function initCancelSubscription() {
+    const confirmBtn = document.getElementById('cancel-sub-confirm-btn');
+    if (!confirmBtn) return;
+
+    confirmBtn.addEventListener('click', async () => {
+        const overlay   = document.getElementById('cancel-sub-modal');
+        const cancelBtn = document.querySelector('.sub-cancel-btn');
+
+        confirmBtn.disabled    = true;
+        confirmBtn.textContent = 'A cancelar...';
+
+        try {
+            const response = await fetch('/com_soc/subscricao/cancelar/', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': getCsrf() },
+            });
+
+            const data = await response.json();
+
+            if (overlay) closeModal(overlay);
+
+            if (data.ok) {
+                showToast('Subscrição cancelada. O acesso termina no fim do período atual.');
+                if (cancelBtn) {
+                    cancelBtn.disabled    = true;
+                    cancelBtn.textContent = 'Cancelamento agendado';
+                }
+            } else {
+                showToast(data.error || 'Erro ao cancelar. Tenta novamente.', 'error');
+            }
+
+        } catch (err) {
+            console.error('Erro ao cancelar subscrição:', err);
+            showToast('Erro de ligação. Tenta novamente.', 'error');
+            if (overlay) closeModal(overlay);
+        } finally {
+            confirmBtn.disabled    = false;
+            confirmBtn.textContent = 'Confirmar cancelamento';
+        }
+    });
+}
+
+function cancelarSubscricao() {
+    const overlay = document.getElementById('cancel-sub-modal');
+    if (overlay) openModal(overlay);
 }

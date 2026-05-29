@@ -764,3 +764,27 @@
     color: var(--error-text);
     border: 1px solid var(--error-border);
 }
+
+.sub-cancel-btn {
+    width: 100%;
+    margin-top: 16px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(220, 38, 38, 0.25);
+    background: white;
+    color: #dc2626;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.sub-cancel-btn:hover:not(:disabled) {
+    background: #fff5f5;
+    border-color: rgba(220, 38, 38, 0.5);
+}
+
+.sub-cancel-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+}

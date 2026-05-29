@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscrição Cancelada</title>
+</head>
+<body style="margin:0;padding:0;background:#f0f4ff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f4ff;padding:40px 0;">
+    <tr>
+      <td align="center">
+        <table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 4px 24px rgba(37,99,235,0.08);">
+
+          <!-- Header -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#94a3b8,#64748b);padding:32px 40px;text-align:center;">
+              <p style="margin:0;color:rgba(255,255,255,0.85);font-size:13px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;">ENIDH — Comunicação Social</p>
+              <h1 style="margin:12px 0 0;color:#fff;font-size:26px;font-weight:700;">Subscrição Cancelada</h1>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:36px 40px;">
+              <p style="margin:0 0 16px;color:#1e3a8a;font-size:16px;font-weight:600;">Olá, {{ user.username }}!</p>
+              <p style="margin:0 0 24px;color:#475569;font-size:15px;line-height:1.6;">
+                A renovação automática foi cancelada. O teu acesso continua ativo até {{ subscricao.data_fim }}.
+              </p>
+              <p style="margin:0 0 24px;color:#475569;font-size:15px;line-height:1.6;">
+                Esperamos ver-te de volta em breve. Podes subscrever novamente a qualquer momento.
+              </p>
+              <p style="margin:0;color:#475569;font-size:14px;line-height:1.6;">
+                Se cancelaste por engano ou tens alguma dúvida, responde a este email.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:20px 40px;border-top:1px solid #e2e8f0;text-align:center;">
+              <p style="margin:0;color:#94a3b8;font-size:12px;">© ENIDH Comunicação Social — Este email foi enviado automaticamente.</p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

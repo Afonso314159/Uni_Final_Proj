@@ -506,12 +506,15 @@ def editar_noticia(request, id):
 def account(request):
     active_sub = (
         request.user.subscricoes
-        .filter(estado='Ativa')
+        .filter(
+            estado__in=['Ativa', 'Cancelada'],
+            data_fim__gte=timezone.now().date()
+        )
         .order_by('-data_fim')
         .first()
     )
     days_member = (timezone.now().date() - request.user.date_joined.date()).days
- 
+
     context = {
         'page_type': 'account',
         'page_title': 'Minha Conta',
@@ -520,7 +523,6 @@ def account(request):
         'categoria_choices': Noticia.Categoria.choices,
     }
     return render(request, 'com_soc/account.html', context)
- 
  
 @require_POST
 @authenticated_user

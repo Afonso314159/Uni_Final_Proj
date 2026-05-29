@@ -53,6 +53,7 @@
                 </div>
             </div>
 
+            {% if not request.user.is_staff and not request.user.is_superuser %}
             <!-- Subscription Card -->
             <div class="account-card subscription-card">
                 <div class="card-label">
@@ -63,10 +64,17 @@
                 </div>
 
                 {% if active_sub %}
-                    <div class="sub-status sub-active">
-                        <span class="sub-status-dot"></span>
-                        Ativa
-                    </div>
+                    {% if active_sub.estado == 'Ativa' %}
+                        <div class="sub-status sub-active">
+                            <span class="sub-status-dot"></span>
+                            Ativa
+                        </div>
+                    {% elif active_sub.estado == 'Cancelada' %}
+                        <div class="sub-status sub-cancelled">
+                            <span class="sub-status-dot"></span>
+                            Cancelada — acesso até {{ active_sub.data_fim|date:"d/m/Y" }}
+                        </div>
+                    {% endif %}
                     <div class="sub-dates">
                         <div class="sub-date-row">
                             <span class="sub-date-label">Início</span>
@@ -81,6 +89,9 @@
                     {% if active_sub.preco %}
                     <div class="sub-price">{{ active_sub.preco }}€ <span>/ período</span></div>
                     {% endif %}
+                    {% if active_sub.estado == 'Ativa' %}
+                    <button class="sub-cancel-btn" onclick="cancelarSubscricao()">Cancelar subscrição</button>
+                    {% endif %}
                 {% else %}
                     <div class="sub-status sub-inactive">
                         <span class="sub-status-dot"></span>
@@ -90,6 +101,7 @@
                     <a href="{% url 'sub_ad' %}" class="sub-cta-btn">Ver planos</a>
                 {% endif %}
             </div>
+            {% endif %}
 
         </div>
 
@@ -278,7 +290,40 @@
         </div>
     </div>
 </div>
-
+<!-- Cancel Subscription Modal -->
+<div id="cancel-sub-modal" class="modal-overlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Cancelar subscrição</h2>
+            <button class="modal-close">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p style="color:#475569;font-size:15px;line-height:1.6;margin:0 0 24px;">
+                Tens a certeza que queres cancelar? Mantens o acesso até ao fim do período atual e não serás cobrado novamente.
+            </p>
+            <div style="display:flex;gap:12px;">
+                <button id="cancel-sub-confirm-btn" style="
+                    flex:1;padding:10px;border-radius:10px;border:none;cursor:pointer;
+                    background:linear-gradient(135deg,#ef4444,#dc2626);
+                    color:white;font-size:14px;font-weight:600;
+                    box-shadow:0 4px 12px rgba(220,38,38,0.25);
+                    transition:opacity 0.2s;">
+                    Confirmar cancelamento
+                </button>
+                <button class="modal-close" style="
+                    flex:1;padding:10px;border-radius:10px;border:1px solid rgba(59,130,246,0.2);
+                    cursor:pointer;background:white;color:#1e3a8a;
+                    font-size:14px;font-weight:600;transition:opacity 0.2s;">
+                    Manter subscrição
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}

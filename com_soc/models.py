@@ -1,6 +1,7 @@
 # com_soc/models.py
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from datetime import date
 
 
 class Utilizador(AbstractUser):
@@ -78,6 +79,16 @@ class Subscricao(models.Model):
 
     def __str__(self):
         return f"{self.utilizador} — {self.plano} ({self.estado})"
+    
+    @property
+    def tem_acesso(self):
+        return (
+            self.estado == self.Estado.ATIVA or (
+                self.estado == self.Estado.CANCELADA and
+                self.data_fim is not None and
+                self.data_fim >= date.today()
+            )
+        )
 
 
 class Noticia(models.Model):
