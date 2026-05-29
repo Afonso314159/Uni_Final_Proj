@@ -3,6 +3,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'com_soc/css/sub_ad.css' %}">
+<link rel="stylesheet" href="{% static 'com_soc/css/main.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -86,6 +87,13 @@
     <p class="sub-footer-note">Pagamento seguro. Sem renovação automática surpresa.</p>
 
 </section>
+
+<div id="toast" class="toast">
+    <div class="toast-content">
+        <div class="toast-icon"></div>
+        <span class="toast-message"></span>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}

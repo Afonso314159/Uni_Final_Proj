@@ -7,34 +7,13 @@ from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from django.urls import reverse
 from django.conf import settings
+from django.shortcuts import get_object_or_404
+from .models import Notificacao
 import os
 
 # ---------------------------------------------------------------------------
 # AI Moderation
 # ---------------------------------------------------------------------------
-
-_AI_PROMPT = """You are an AI system specialized in detecting misinformation and abusive content in news articles.
-
-Analyze the following news text and evaluate:
-1) The likelihood of the content being false or misleading.
-2) The presence of abusive, offensive, or harmful language.
-
-Return ONLY a valid JSON object with the following fields:
-- fake_score: integer from 0 to 100 (0 = fully credible, 100 = highly likely fake/misleading)
-- abusive_score: integer from 0 to 100 (0 = no abusive content, 100 = highly abusive)
-- risk_level: "ideal", "low", "medium", "high" or "trash"
-  (ideal if both are 0; low if both below 20; medium if both below 40;
-   high if both below 70; trash if either score is 70 or above)
-- reasons: a short list (2-5 items) explaining key signals
-- recommendation: a short sentence suggesting what to do
-
-Rules:
-- Be objective and concise.
-- Do not include any text outside the JSON.
-- Do not include explanations before or after the JSON.
-- Ensure the JSON is valid and properly formatted.
-
-News text to analyze:"""
 
 _FALLBACK_EVALUATION = {
     "fake_score": 50,
@@ -44,19 +23,13 @@ _FALLBACK_EVALUATION = {
     "recommendation": "Review manually due to an AI evaluation error.",
 }
 
-
-def AI_score(noticia):
-
-    """
-    Calls the Google Gemini API to evaluate a news article.
-    Returns a dict with: fake_score, abusive_score, risk_level, reasons, recommendation.
-    """
+def AI_score(noticia, config):
     
     AI_API_KEY = os.getenv('GEMINI_API_KEY')
     AI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={AI_API_KEY}"
 
     news_text = f"{noticia.titulo}\n\n{noticia.corpo_texto}"
-    full_prompt = f"{_AI_PROMPT}\n\n«{news_text}»\n\nRESPOSTA:"
+    full_prompt = f"{config.ai_prompt}\n\n«{news_text}»\n\nRESPOSTA:"
 
     # 2. Estrutura do payload exigida pela API da Google
     payload = {
@@ -86,12 +59,40 @@ def AI_score(noticia):
         
         # Limpa eventuais marcações de markdown adicionais
         raw_text = raw_text.strip().removeprefix("```json").removesuffix("```").strip()
-        
-        return json.loads(raw_text)
+
+        result = json.loads(raw_text)
+
+        result["risk_level"] = compute_risk_level(
+            result.get("fake_score", 50),
+            result.get("abusive_score", 50),
+            config=config
+        )
+
+        return result
 
     except Exception as e:
         print(f"Erro na moderação IA: {e}")
         return _FALLBACK_EVALUATION
+
+def compute_risk_level(fake, abusive, config):
+
+    if fake <= config.ideal_threshold and abusive <= config.ideal_threshold:
+        return "ideal"
+
+    if fake <= config.low_threshold and abusive <= config.low_threshold:
+        return "low"
+
+    if fake <= config.medium_threshold and abusive <= config.medium_threshold:
+        return "medium"
+    
+    if fake <= config.high_threshold and abusive <= config.high_threshold:
+        return "high"
+
+    return "trash"
+
+    
+    
+    
 
 
 # ---------------------------------------------------------------------------
@@ -140,4 +141,12 @@ def send_verification_email(request, user):
         recipient_list=[user.email],
         html_message=html_message,
         fail_silently=False,
+    )
+
+
+def create_notification(user, message):
+
+    Notificacao.objects.create(
+        utilizador=user,
+        conteudo=message
     )

@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views
+from . import views, stripe_views
 
 urlpatterns = [
     # ex: /com_soc/
@@ -34,4 +34,8 @@ urlpatterns = [
     path('account/avatar/', views.update_avatar, name='update_avatar'),
     path('account/username/', views.update_username, name='update_username'),
     path('account/password/', views.change_password, name='change_password'),
+    path("save_config/", views.save_config, name="save_config"),
+    path('subscricao/checkout/',  stripe_views.criar_checkout_session, name='criar_checkout_session'),
+    path('subscricao/sucesso/',   stripe_views.checkout_sucesso,       name='checkout_sucesso'),
+    path('subscricao/cancelado/', stripe_views.checkout_cancelado,     name='checkout_cancelado'),
 ]

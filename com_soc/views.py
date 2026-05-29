@@ -10,10 +10,10 @@ from django.core.paginator import Paginator
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.exceptions import ValidationError
 
-from .models import Noticia, Comentario, ImagemNoticia, Utilizador, Notificacao
+from .models import Noticia, Comentario, ImagemNoticia, Utilizador, Notificacao, ModerationConfig
 from .forms import RegisterForm, NoticiaForm
 from .decorators import admin_required, sub_required, editor_required, authenticated_user
-from .utils import AI_score, email_verification_token, send_verification_email
+from .utils import AI_score, email_verification_token, send_verification_email, create_notification
 import json
 
 
@@ -245,9 +245,13 @@ def notifications(request):
 
 @authenticated_user
 def definicoes(request):
+
+    config = get_object_or_404(ModerationConfig, name="default")
+
     context = {
         'page_type': 'definicoes',
         'page_title': 'Definições',
+        "moderation_config": config
     }
     return render(request, "com_soc/definicoes.html", context)
  
@@ -325,6 +329,8 @@ def aceitar_noticia(request, id):
     noticia.data_publicacao = timezone.now().date()
     noticia.editor_aprovador = request.user
     noticia.save()
+    message = f"A notícia '{noticia.titulo}' foi aceite e publicada."
+    create_notification(noticia.autor,message)
     return JsonResponse({'success': True})
 
 @require_POST
@@ -333,6 +339,8 @@ def aceitar_noticia(request, id):
 def eliminar_noticia(request, id):
     noticia = get_object_or_404(Noticia, id=id)
     noticia.delete()
+    message = f"A notícia '{noticia.titulo}' foi rejeitada."
+    create_notification(noticia.autor,message)
     return JsonResponse({'success': True})
 
 
@@ -387,6 +395,7 @@ def add_comment(request, noticia_id):
             "id": comment.id,
             "author": comment.utilizador.username,
             "conteudo": comment.conteudo,
+            "avatar_url": comment.utilizador.profile_picture.url if comment.utilizador.profile_picture else None,
         }
     })
 
@@ -423,12 +432,16 @@ def create_noticia(request):
         noticia_obj.acesso = Noticia.Acesso.PUBLICO
         noticia_obj.save()
 
-        evaluation = AI_score(noticia_obj)
+        config = get_object_or_404(ModerationConfig, name="default")
+
+        evaluation = AI_score(noticia_obj, config)
         noticia_obj.ai_evaluation = evaluation
         risk_level = evaluation.get('risk_level', 'medium')
 
         if risk_level == 'trash':
             noticia_obj.delete()
+            message = f"A notícia '{noticia_obj.titulo}' foi rejeitada."
+            create_notification(noticia_obj.autor,message)
             return JsonResponse({
                 "success": False,
                 "rejected": True,
@@ -440,8 +453,13 @@ def create_noticia(request):
         elif risk_level == 'ideal':
             noticia_obj.estado_publicacao = Noticia.EstadoPublicacao.PUBLICADA
             noticia_obj.data_publicacao = timezone.now().date()
+            message = f"A notícia '{noticia_obj.titulo}' foi aceite e publicada."
+            create_notification(noticia_obj.autor,message)
+            
         else:
             noticia_obj.estado_publicacao = Noticia.EstadoPublicacao.PENDENTE
+            message = f"A notícia '{noticia_obj.titulo}' esta pendente a espera de revisao."
+            create_notification(noticia_obj.autor,message)
 
         noticia_obj.save()
 
@@ -586,3 +604,25 @@ def change_password(request):
     update_session_auth_hash(request, request.user)
  
     return JsonResponse({'success': True})
+
+# -----------------------------------------------------------------------
+# Settings views
+# -----------------------------------------------------------------------
+ 
+@require_POST
+@authenticated_user
+@editor_required
+def save_config(request):
+
+    data = json.loads(request.body)
+
+    config = get_object_or_404(ModerationConfig, name="default")
+
+    config.ideal_threshold = int(data["ideal_threshold"])
+    config.low_threshold = int(data["low_threshold"])
+    config.medium_threshold = int(data["medium_threshold"])
+    config.high_threshold = int(data["high_threshold"])
+
+    config.save()
+
+    return JsonResponse({"success": True})

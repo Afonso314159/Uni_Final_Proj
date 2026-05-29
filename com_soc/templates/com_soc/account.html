@@ -10,13 +10,11 @@
 {% block content %}
 <div class="account-page">
 
-    <!-- Page Header -->
     <div class="account-header">
         <h1 class="account-header-title">Minha Conta</h1>
         <p class="account-header-sub">Gere o teu perfil e preferências</p>
     </div>
 
-    <!-- Main Grid -->
     <div class="account-grid">
 
         <!-- ── LEFT COLUMN ── -->
@@ -25,7 +23,6 @@
             <!-- Profile Card -->
             <div class="account-card profile-card">
                 <div class="profile-avatar-wrap">
-                    <!-- Avatar: shows photo if exists, else initials -->
                     <div class="profile-avatar" id="profile-avatar">
                         {% if user.profile_picture %}
                             <img src="{{ user.profile_picture.url }}" alt="Foto de perfil" id="avatar-img">
@@ -99,7 +96,7 @@
         <!-- ── RIGHT COLUMN ── -->
         <div class="account-col-right">
 
-            <!-- Username Section -->
+            <!-- Username -->
             <div class="account-card">
                 <div class="card-label">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -128,7 +125,7 @@
                 </div>
             </div>
 
-            <!-- Email Section (read-only) -->
+            <!-- Email (read-only, clean) -->
             <div class="account-card">
                 <div class="card-label">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -138,17 +135,10 @@
                 </div>
                 <div class="field-row">
                     <span class="field-value field-value--muted">{{ user.email }}</span>
-                    <span class="field-locked-badge">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-                        </svg>
-                        Não editável
-                    </span>
                 </div>
-                <p class="field-hint">Para alterar o teu email, contacta o suporte.</p>
             </div>
 
-            <!-- Password Section -->
+            <!-- Password -->
             <div class="account-card">
                 <div class="card-label">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -165,10 +155,9 @@
                         Alterar
                     </button>
                 </div>
-                <p class="field-hint">Última alteração: desconhecida</p>
             </div>
 
-            <!-- Stats / Fun facts row -->
+            <!-- Stats -->
             <div class="account-stats-row">
                 <div class="account-stat-card">
                     <div class="stat-icon">
@@ -211,7 +200,7 @@
     </div>
 </div>
 
-<!-- ── Password Change Modal ── -->
+<!-- Password Modal -->
 <div id="password-modal" class="modal-overlay">
     <div class="modal password-modal">
         <div class="modal-header">
@@ -224,7 +213,6 @@
         </div>
         <div class="modal-body">
 
-            <!-- Success state -->
             <div id="pw-success" class="pw-success-state" style="display:none;">
                 <div class="pw-success-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -235,7 +223,6 @@
                 <p>A tua palavra-passe foi atualizada com sucesso.</p>
             </div>
 
-            <!-- Form state -->
             <div id="pw-form-state">
                 <div class="pw-error" id="pw-error" style="display:none;"></div>
 
@@ -243,7 +230,7 @@
                     <label for="pw-current">Palavra-passe atual</label>
                     <div class="pw-input-wrap">
                         <input type="password" id="pw-current" class="pw-input" placeholder="••••••••" autocomplete="current-password">
-                        <button type="button" class="pw-toggle" data-target="pw-current" title="Mostrar">
+                        <button type="button" class="pw-toggle" data-target="pw-current">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -256,29 +243,19 @@
                     <label for="pw-new">Nova palavra-passe</label>
                     <div class="pw-input-wrap">
                         <input type="password" id="pw-new" class="pw-input" placeholder="••••••••" autocomplete="new-password">
-                        <button type="button" class="pw-toggle" data-target="pw-new" title="Mostrar">
+                        <button type="button" class="pw-toggle" data-target="pw-new">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
                         </button>
                     </div>
-                    <!-- Strength bar -->
-                    <div class="pw-strength-bar" id="pw-strength-bar">
-                        <div class="pw-strength-fill" id="pw-strength-fill"></div>
-                    </div>
+                    <div class="pw-strength-bar"><div class="pw-strength-fill" id="pw-strength-fill"></div></div>
                     <div class="pw-strength-label" id="pw-strength-label"></div>
-                    <!-- Requirements -->
-                    <ul class="pw-requirements" id="pw-requirements">
-                        <li data-rule="length" class="req-item">
-                            <span class="req-dot"></span>Mínimo 8 caracteres
-                        </li>
-                        <li data-rule="upper" class="req-item">
-                            <span class="req-dot"></span>Uma letra maiúscula
-                        </li>
-                        <li data-rule="number" class="req-item">
-                            <span class="req-dot"></span>Um número
-                        </li>
+                    <ul class="pw-requirements">
+                        <li data-rule="length" class="req-item"><span class="req-dot"></span>Mínimo 8 caracteres</li>
+                        <li data-rule="upper"  class="req-item"><span class="req-dot"></span>Uma letra maiúscula</li>
+                        <li data-rule="number" class="req-item"><span class="req-dot"></span>Um número</li>
                     </ul>
                 </div>
 
@@ -286,7 +263,7 @@
                     <label for="pw-confirm">Confirmar nova palavra-passe</label>
                     <div class="pw-input-wrap">
                         <input type="password" id="pw-confirm" class="pw-input" placeholder="••••••••" autocomplete="new-password">
-                        <button type="button" class="pw-toggle" data-target="pw-confirm" title="Mostrar">
+                        <button type="button" class="pw-toggle" data-target="pw-confirm">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

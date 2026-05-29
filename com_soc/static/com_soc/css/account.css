@@ -53,7 +53,6 @@
     box-shadow: var(--shadow-sm);
 }
 
-/* Card section label (icon + text) */
 .card-label {
     display: flex;
     align-items: center;
@@ -162,7 +161,6 @@
     margin-bottom: var(--spacing-xs);
 }
 
-/* Role badges */
 .profile-role-badge {
     display: inline-block;
     padding: 3px 12px;
@@ -305,7 +303,7 @@
     box-shadow: var(--shadow-sm);
 }
 
-/* ── Field Rows (username / email / password) ── */
+/* ── Field Rows ── */
 .field-row {
     display: flex;
     align-items: center;
@@ -351,33 +349,6 @@
     width: 14px;
     height: 14px;
     stroke-width: 2;
-}
-
-.field-locked-badge {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 4px 10px;
-    border-radius: var(--radius-sm);
-    background: var(--gray-50);
-    color: var(--gray-400);
-    font-size: 0.75rem;
-    font-weight: 500;
-    border: 1px solid var(--gray-100);
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.field-locked-badge svg {
-    width: 12px;
-    height: 12px;
-    stroke-width: 2;
-}
-
-.field-hint {
-    font-size: 0.8125rem;
-    color: var(--gray-400);
-    margin-top: var(--spacing-sm);
 }
 
 /* Inline edit row */
@@ -463,18 +434,11 @@
     font-size: 0.8125rem;
     margin-top: var(--spacing-sm);
     min-height: 20px;
-    border-radius: var(--radius-sm);
-    padding: 0;
     transition: all var(--transition-fast);
 }
 
-.field-feedback.success {
-    color: var(--success-text);
-}
-
-.field-feedback.error {
-    color: var(--error-text);
-}
+.field-feedback.success { color: var(--success-text); }
+.field-feedback.error   { color: var(--error-text); }
 
 /* ── Stats Row ── */
 .account-stats-row {
@@ -513,13 +477,8 @@
     flex-shrink: 0;
 }
 
-.stat-icon--gold {
-    background: linear-gradient(135deg, #92710a, #c8960c);
-}
-
-.stat-icon--teal {
-    background: linear-gradient(135deg, #0e7490, #06b6d4);
-}
+.stat-icon--gold { background: linear-gradient(135deg, #92710a, #c8960c); }
+.stat-icon--teal { background: linear-gradient(135deg, #0e7490, #06b6d4); }
 
 .stat-icon svg {
     width: 22px;
@@ -550,9 +509,7 @@
 }
 
 /* ── Password Modal ── */
-.password-modal {
-    max-width: 440px;
-}
+.password-modal { max-width: 440px; }
 
 .pw-error {
     background: var(--error-bg);
@@ -576,9 +533,7 @@
     margin-bottom: var(--spacing-sm);
 }
 
-.pw-input-wrap {
-    position: relative;
-}
+.pw-input-wrap { position: relative; }
 
 .pw-input {
     width: 100%;
@@ -598,9 +553,7 @@
     box-shadow: 0 0 0 3px rgba(91, 163, 217, 0.15);
 }
 
-.pw-input.input-error {
-    border-color: var(--error-text);
-}
+.pw-input.input-error { border-color: var(--error-text); }
 
 .pw-toggle {
     position: absolute;
@@ -618,9 +571,7 @@
     transition: color var(--transition-fast);
 }
 
-.pw-toggle:hover {
-    color: var(--gray-500);
-}
+.pw-toggle:hover { color: var(--gray-500); }
 
 .pw-toggle svg {
     width: 18px;
@@ -628,7 +579,6 @@
     stroke-width: 1.75;
 }
 
-/* Strength bar */
 .pw-strength-bar {
     height: 4px;
     background: var(--gray-100);
@@ -652,7 +602,6 @@
     transition: color var(--transition-fast);
 }
 
-/* Password requirements */
 .pw-requirements {
     list-style: none;
     margin-top: var(--spacing-sm);
@@ -667,7 +616,7 @@
     align-items: center;
     gap: var(--spacing-sm);
     font-size: 0.8125rem;
-    color: var(--gray-400);
+    color: var(--gray-300);
     transition: color var(--transition-fast);
 }
 
@@ -675,20 +624,14 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--gray-200);
+    background: var(--gray-100);
     flex-shrink: 0;
     transition: background var(--transition-fast);
 }
 
-.req-item.met {
-    color: var(--success-text);
-}
+.req-item.met { color: var(--success-text); }
+.req-item.met .req-dot { background: var(--success-text); }
 
-.req-item.met .req-dot {
-    background: var(--success-text);
-}
-
-/* Match hint */
 .pw-match-hint {
     font-size: 0.8125rem;
     margin-top: 6px;
@@ -700,7 +643,6 @@
 .pw-match-hint.match    { color: var(--success-text); }
 .pw-match-hint.no-match { color: var(--error-text); }
 
-/* Submit button */
 .pw-submit-btn {
     width: 100%;
     padding: 12px;
@@ -729,7 +671,6 @@
     box-shadow: none;
 }
 
-/* Success state */
 .pw-success-state {
     text-align: center;
     padding: var(--spacing-xl) var(--spacing-md);
@@ -767,18 +708,11 @@
     margin-bottom: var(--spacing-sm);
 }
 
-.pw-success-state p {
-    color: var(--gray-500);
-    font-size: 0.9375rem;
-}
+.pw-success-state p { color: var(--gray-500); font-size: 0.9375rem; }
 
-/* ==========================================
-   Responsive
-   ========================================== */
+/* ── Responsive ── */
 @media (max-width: 900px) {
-    .account-grid {
-        grid-template-columns: 1fr;
-    }
+    .account-grid { grid-template-columns: 1fr; }
 
     .account-col-left {
         display: grid;
@@ -786,28 +720,16 @@
         gap: var(--spacing-lg);
     }
 
-    .account-col-left .account-card {
-        margin-bottom: 0;
-    }
+    .account-col-left .account-card { margin-bottom: 0; }
 }
 
 @media (max-width: 640px) {
-    .account-page {
-        padding: var(--spacing-lg) var(--spacing-md);
-    }
-
-    .account-col-left {
-        grid-template-columns: 1fr;
-    }
-
-    .account-stats-row {
-        grid-template-columns: 1fr;
-    }
+    .account-page { padding: var(--spacing-lg) var(--spacing-md); }
+    .account-col-left { grid-template-columns: 1fr; }
+    .account-stats-row { grid-template-columns: 1fr; }
 }
 
-/* ==========================================
-   Toast Notification
-   ========================================== */
+/* ── Toast ── */
 .account-toast {
     position: fixed;
     bottom: var(--spacing-xl);

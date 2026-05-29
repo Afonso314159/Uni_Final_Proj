@@ -36,23 +36,48 @@ class Utilizador(AbstractUser):
         super().save(*args, **kwargs)
 
 
+
 class Subscricao(models.Model):
+
     class Estado(models.TextChoices):
-        ATIVA = 'Ativa', 'Ativa'
-        EXPIRADA = 'Expirada', 'Expirada'
+        PENDENTE  = 'Pendente',  'Pendente'
+        ATIVA     = 'Ativa',     'Ativa'
+        EXPIRADA  = 'Expirada',  'Expirada'
+        CANCELADA = 'Cancelada', 'Cancelada'
+
+    class Plano(models.TextChoices):
+        MENSAL = 'mensal', 'Mensal'
+        ANUAL  = 'anual',  'Anual'
 
     utilizador = models.ForeignKey(
         Utilizador,
         on_delete=models.CASCADE,
         related_name='subscricoes'
     )
-    data_inicio = models.DateField()
-    data_fim = models.DateField()
+    plano = models.CharField(
+        max_length=10,
+        choices=Plano.choices,
+        null=True,
+        blank=True
+    )
+    data_inicio = models.DateField(null=True, blank=True)
+    data_fim    = models.DateField(null=True, blank=True)
     estado = models.CharField(
         max_length=20,
         choices=Estado.choices,
+        default=Estado.PENDENTE,
     )
     preco = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+
+    # Stripe fields (new)
+    stripe_customer_id     = models.CharField(max_length=100, blank=True, null=True)
+    stripe_subscription_id = models.CharField(max_length=100, blank=True, null=True, unique=True)
+
+    class Meta:
+        ordering = ['-data_inicio']
+
+    def __str__(self):
+        return f"{self.utilizador} — {self.plano} ({self.estado})"
 
 
 class Noticia(models.Model):
@@ -111,6 +136,9 @@ class Noticia(models.Model):
         null=True,
         related_name='noticias_escritas'
     )
+
+    def __str__(self):
+        return self.titulo
 
 
 class ImagemNoticia(models.Model):
@@ -195,3 +223,20 @@ class ChatMensagem(models.Model):
         default=Estado.NORMAL
     )
     timestamp = models.DateTimeField(auto_now_add=True)
+
+
+class ModerationConfig(models.Model):
+
+    name = models.CharField(max_length=50, default="default")
+
+    ai_prompt = models.TextField()
+
+    ideal_threshold = models.PositiveSmallIntegerField(default=0)
+    low_threshold = models.PositiveSmallIntegerField(default=20)
+    medium_threshold = models.PositiveSmallIntegerField(default=40)
+    high_threshold = models.PositiveSmallIntegerField(default=70)
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name

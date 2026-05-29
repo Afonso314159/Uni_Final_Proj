@@ -1,9 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import (
-    Utilizador, Subscricao, Noticia, ImagemNoticia,
-    Comentario, Notificacao, ChatMensagem
-)
+from .models import Utilizador, Subscricao, Noticia, ImagemNoticia,Comentario, Notificacao, ChatMensagem, ModerationConfig
 
 class UtilizadorAdmin(UserAdmin):
     # adds role and estado to the bottom of the user edit page
@@ -18,3 +15,4 @@ admin.site.register(ImagemNoticia)
 admin.site.register(Comentario)
 admin.site.register(Notificacao)
 admin.site.register(ChatMensagem)
+admin.site.register(ModerationConfig)

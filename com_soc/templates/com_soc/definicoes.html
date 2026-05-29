@@ -3,6 +3,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'com_soc/css/definicoes.css' %}">
+<link rel="stylesheet" href="{% static 'com_soc/css/main.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -78,7 +79,10 @@
                     <span class="settings-ai-badge settings-ai-badge--ideal">IDEAL</span>
                     <span class="settings-ai-rule">Ambas as pontuações igual a 0 — publicação automática</span>
                 </div>
-                <span class="settings-ai-fixed">Fixo</span>
+                <div class="settings-ai-input-wrap">
+                    <input type="number" class="settings-ai-input" name="ideal_threshold" value="{{ moderation_config.ideal_threshold }}" min="0" max="99">
+                    <span class="settings-ai-unit">/ 100</span>
+                </div>
             </div>
 
             <div class="settings-ai-row">
@@ -87,7 +91,7 @@
                     <span class="settings-ai-rule">Ambas abaixo de</span>
                 </div>
                 <div class="settings-ai-input-wrap">
-                    <input type="number" class="settings-ai-input" name="low_threshold" value="20" min="1" max="99">
+                    <input type="number" class="settings-ai-input" name="low_threshold" value="{{ moderation_config.low_threshold }}" min="1" max="99">
                     <span class="settings-ai-unit">/ 100</span>
                 </div>
             </div>
@@ -98,7 +102,7 @@
                     <span class="settings-ai-rule">Ambas abaixo de</span>
                 </div>
                 <div class="settings-ai-input-wrap">
-                    <input type="number" class="settings-ai-input" name="medium_threshold" value="40" min="1" max="99">
+                    <input type="number" class="settings-ai-input" name="medium_threshold" value="{{ moderation_config.medium_threshold }}" min="1" max="99">
                     <span class="settings-ai-unit">/ 100</span>
                 </div>
             </div>
@@ -109,7 +113,7 @@
                     <span class="settings-ai-rule">Ambas abaixo de</span>
                 </div>
                 <div class="settings-ai-input-wrap">
-                    <input type="number" class="settings-ai-input" name="high_threshold" value="70" min="1" max="99">
+                    <input type="number" class="settings-ai-input" name="high_threshold" value="{{ moderation_config.high_threshold }}" min="1" max="99">
                     <span class="settings-ai-unit">/ 100</span>
                 </div>
             </div>
@@ -128,6 +132,12 @@
             <button class="settings-save-btn" id="save-ai-thresholds">Guardar limiares</button>
         </div>
 
+    </div>
+    <div id="toast" class="toast">
+        <div class="toast-content">
+            <span class="toast-icon">✓</span>
+            <span class="toast-message">Limiares guardados com sucesso</span>
+        </div>
     </div>
     {% endif %}
 
