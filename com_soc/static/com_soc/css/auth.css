@@ -78,56 +78,10 @@ body.auth-page header {
 
 /* ==========================================
    Password Strength Indicator
+   Wrapper only — .strength-bar* rules live in main.css
    ========================================== */
 .password-strength {
     margin-top: var(--spacing-sm);
-}
-
-.strength-bar {
-    height: 4px;
-    background-color: var(--gray-100);
-    border-radius: 2px;
-    overflow: hidden;
-    margin-bottom: var(--spacing-xs);
-}
-
-.strength-bar-fill {
-    height: 100%;
-    width: 0;
-    border-radius: 2px;
-    transition: width var(--transition-normal), background-color var(--transition-normal);
-}
-
-.strength-bar-fill.weak {
-    width: 33%;
-    background-color: var(--error-text);
-}
-
-.strength-bar-fill.medium {
-    width: 66%;
-    background-color: #f59e0b;
-}
-
-.strength-bar-fill.strong {
-    width: 100%;
-    background-color: var(--success-text);
-}
-
-.strength-text {
-    font-size: 0.75rem;
-    color: var(--gray-500);
-}
-
-.strength-text.weak {
-    color: var(--error-text);
-}
-
-.strength-text.medium {
-    color: #f59e0b;
-}
-
-.strength-text.strong {
-    color: var(--success-text);
 }
 
 /* ==========================================
@@ -166,9 +120,7 @@ body.auth-page header {
 }
 
 @keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
+    to { transform: rotate(360deg); }
 }
 
 /* ==========================================
@@ -186,4 +138,20 @@ body.auth-page header {
     .auth-container h2 {
         font-size: 1.5rem;
     }
+}
+
+.auth-subtitle--error {
+    color: var(--error-text);
+}
+
+.modal-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chat-online-count {
+    font-size: 0.8rem;
+    color: var(--gray-400);
+    font-weight: 500;
 }

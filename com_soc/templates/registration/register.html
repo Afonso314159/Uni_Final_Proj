@@ -1,80 +1,69 @@
+{% extends "registration/auth_base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registar - ENIDH Comunicação Social</title>
-    <link rel="stylesheet" href="{% static 'com_soc/css/main.css' %}">
-    <link rel="stylesheet" href="{% static 'com_soc/css/auth.css' %}">
-</head>
-<body class="auth-page">
-    <header>
-        <a href="{% url 'landing_page' %}" class="logo">ENIDH - <span>Comunicação Social</span></a>
-        <a href="{% url 'landing_page' %}" class="back-btn">← Voltar</a>
-    </header>
 
-    <main class="auth-main">
-        <div class="auth-container register">
-            <h2>Criar Conta</h2>
-            <p class="auth-subtitle">Registe-se para aceder às notícias completas.</p>
+{% block title %}Registar - ENIDH Comunicação Social{% endblock %}
 
-            {% if form.errors %}
-            <div class="alert alert-error">
-                <strong>Por favor corrija os seguintes erros:</strong>
-                <ul>
-                    {% for field in form %}
-                        {% for error in field.errors %}
-                            <li>{{ field.label }}: {{ error }}</li>
-                        {% endfor %}
-                    {% endfor %}
-                    {% for error in form.non_field_errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endif %}
+{% block content %}
+<div class="auth-container register">
+    <h2>Criar Conta</h2>
+    <p class="auth-subtitle">Registe-se para aceder às notícias completas.</p>
 
-            <form method="post" id="register-form" novalidate>
-                {% csrf_token %}
-                
-                <div class="form-group">
-                    <label for="id_username">Nome de Utilizador</label>
-                    <input type="text" name="username" id="id_username" value="{{ form.username.value|default:'' }}" placeholder="Escolha um nome de utilizador" required autofocus maxlength="150">
-                    <span class="helptext">Máximo 150 caracteres. Apenas letras, números e @/./+/-/_</span>
-                </div>
+    {% if form.errors %}
+    <div class="alert alert-error">
+        <strong>Por favor corrija os seguintes erros:</strong>
+        <ul>
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <li>{{ field.label }}: {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
 
-                <div class="form-group">
-                    <label for="id_email">Email</label>
-                    <input type="email" name="email" id="id_email" value="{{ form.email.value|default:'' }}" placeholder="O seu email" required>
-                </div>
+    <form method="post" id="register-form" novalidate>
+        {% csrf_token %}
 
-                <div class="form-group">
-                    <label for="id_password1">Palavra-passe</label>
-                    <input type="password" name="password1" id="id_password1" placeholder="Crie uma palavra-passe segura" required>
-                    <div id="password-strength" class="password-strength">
-                        <div class="strength-bar">
-                            <div class="strength-bar-fill"></div>
-                        </div>
-                        <span class="strength-text"></span>
-                    </div>
-                    <span class="helptext">A sua palavra-passe deve ter pelo menos 8 caracteres e não pode ser apenas numérica.</span>
-                </div>
-
-                <div class="form-group">
-                    <label for="id_password2">Confirmar Palavra-passe</label>
-                    <input type="password" name="password2" id="id_password2" placeholder="Repita a palavra-passe" required>
-                </div>
-
-                <button type="submit" id="submit-btn" class="btn btn-primary btn-full">Registar</button>
-            </form>
-
-            <p class="auth-link">
-                Já tem conta? <a href="{% url 'login' %}">Inicie sessão aqui</a>
-            </p>
+        <div class="form-group">
+            <label for="id_username">Nome de Utilizador</label>
+            <input type="text" name="username" id="id_username" value="{{ form.username.value|default:'' }}" placeholder="Escolha um nome de utilizador" required autofocus maxlength="150">
+            <span class="helptext">Máximo 150 caracteres. Apenas letras, números e @/./+/-/_</span>
         </div>
-    </main>
 
-    <script src="{% static 'com_soc/js/register.js' %}"></script>
-</body>
-</html>
+        <div class="form-group">
+            <label for="id_email">Email</label>
+            <input type="email" name="email" id="id_email" value="{{ form.email.value|default:'' }}" placeholder="O seu email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="id_password1">Palavra-passe</label>
+            <input type="password" name="password1" id="id_password1" placeholder="Crie uma palavra-passe segura" required>
+            <div id="password-strength" class="password-strength">
+                <div class="strength-bar">
+                    <div class="strength-bar-fill"></div>
+                </div>
+                <span class="strength-text"></span>
+            </div>
+            <span class="helptext">A sua palavra-passe deve ter pelo menos 8 caracteres e não pode ser apenas numérica.</span>
+        </div>
+
+        <div class="form-group">
+            <label for="id_password2">Confirmar Palavra-passe</label>
+            <input type="password" name="password2" id="id_password2" placeholder="Repita a palavra-passe" required>
+        </div>
+
+        <button type="submit" id="submit-btn" class="btn btn-primary btn-full">Registar</button>
+    </form>
+
+    <p class="auth-link">
+        Já tem conta? <a href="{% url 'login' %}">Inicie sessão aqui</a>
+    </p>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'com_soc/js/register.js' %}"></script>
+{% endblock %}

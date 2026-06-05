@@ -1,32 +1,17 @@
 /* ==========================================
-   Editor Page
+   Editor Page (refactored)
    ========================================== */
-.editor-feed {
-    flex: 1;
-    padding: var(--spacing-xl);
-    max-width: 900px;
-    width: 100%;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-xl);
-}
 
+/* Layout is handled by .page-content in main.css */
+
+/* Section layout */
 .editor-section {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-sm);
 }
 
-.editor-section-header {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-sm);
-    padding-bottom: var(--spacing-sm);
-    border-bottom: 2px solid var(--primary);
-}
-
+/* Section title */
 .editor-section-title {
     font-size: 1rem;
     font-weight: 700;
@@ -35,15 +20,7 @@
     letter-spacing: 0.05em;
 }
 
-.editor-count {
-    background: var(--primary);
-    color: var(--white);
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 999px;
-}
-
+/* Row */
 .editor-row {
     display: flex;
     align-items: center;
@@ -92,6 +69,7 @@
     flex-shrink: 0;
 }
 
+/* Buttons */
 .editor-btn {
     width: 34px;
     height: 34px;
@@ -140,6 +118,7 @@
     border-color: var(--error-border);
 }
 
+/* Empty state */
 .editor-empty {
     color: var(--gray-400);
     font-size: 0.875rem;
@@ -150,6 +129,7 @@
     border-radius: var(--radius-md);
 }
 
+/* Modal */
 .editor-modal-actions {
     display: flex;
     gap: var(--spacing-sm);
@@ -188,6 +168,7 @@
 /* ==========================================
    AI Risk Badge
    ========================================== */
+
 .ai-risk-badge {
     display: inline-flex;
     align-items: center;
@@ -196,11 +177,9 @@
     letter-spacing: 0.07em;
     padding: 3px 9px;
     border-radius: 999px;
-    border: none;
     cursor: pointer;
     white-space: nowrap;
     transition: opacity 0.15s ease, transform 0.1s ease;
-    line-height: 1.4;
 }
 
 .ai-risk-badge:hover {
@@ -208,36 +187,21 @@
     transform: scale(1.04);
 }
 
-/* size modifier used inside the AI eval modal header */
 .ai-risk-badge--lg {
     font-size: 0.875rem;
     padding: 5px 16px;
     cursor: default;
 }
+
 .ai-risk-badge--lg:hover {
     transform: none;
     opacity: 1;
 }
 
-/* -- colour variants (only low/medium/high ever appear in the pending list) --
-   ideal  → auto-published, never reaches the editor queue
-   trash  → auto-deleted,   never reaches the editor queue           */
-.ai-risk-badge--low {
-    background: #d1fae5;
-    color: #065f46;
-}
-.ai-risk-badge--medium {
-    background: #fef9c3;
-    color: #854d0e;
-}
-.ai-risk-badge--high {
-    background: #ffedd5;
-    color: #9a3412;
-}
-
 /* ==========================================
-   AI Evaluation Modal Content
+   AI Evaluation Modal
    ========================================== */
+
 .ai-eval-risk-header {
     display: flex;
     justify-content: center;
@@ -277,10 +241,10 @@
 
 .ai-eval-score-max {
     font-size: 0.75rem;
-    font-weight: 400;
     color: var(--gray-400);
 }
 
+/* Progress bar */
 .ai-eval-bar {
     height: 8px;
     background: var(--gray-100);
@@ -292,30 +256,16 @@
     height: 100%;
     border-radius: 999px;
     transition: width 0.4s ease;
-    /* colour shifts from green → amber → red based on CSS custom property */
-    background: color-mix(
-        in oklch,
-        #ef4444 calc(var(--bar-score, 50) * 1%),
-        #22c55e calc((100 - var(--bar-score, 50)) * 1%)
-    );
-    /* Fallback for browsers without color-mix */
-    background-color: oklch(from hsl(
-        calc(120 - var(--bar-score, 50) * 1.2),
-        70%, 50%
-    ) l c h);
 }
 
-/* Safe fallback for older browsers that don't support color-mix / oklch */
+/* Fallback coloring */
 @supports not (background: color-mix(in oklch, red, green)) {
     .ai-eval-bar-fill {
         background: var(--primary);
     }
 }
 
-.ai-eval-section {
-    margin-top: var(--spacing-md);
-}
-
+/* Reasons */
 .ai-eval-section-title {
     font-size: 0.8125rem;
     font-weight: 700;
@@ -339,7 +289,6 @@
     color: var(--text-dark);
     padding-left: 1.1em;
     position: relative;
-    line-height: 1.45;
 }
 
 .ai-eval-reasons li::before {
@@ -347,9 +296,9 @@
     position: absolute;
     left: 0;
     color: var(--gray-400);
-    font-weight: 700;
 }
 
+/* Recommendation */
 .ai-eval-recommendation {
     font-size: 0.875rem;
     color: var(--text-dark);
@@ -357,19 +306,4 @@
     border-left: 3px solid var(--primary);
     padding: var(--spacing-sm) var(--spacing-md);
     border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-    line-height: 1.5;
-    margin: 0;
-}
-
-/* ==========================================
-   Responsive
-   ========================================== */
-@media (max-width: 640px) {
-    .editor-row-meta {
-        display: none;
-    }
-
-    .editor-feed {
-        padding: var(--spacing-md);
-    }
 }

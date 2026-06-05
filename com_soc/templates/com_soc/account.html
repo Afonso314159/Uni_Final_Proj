@@ -17,7 +17,7 @@
 
     <div class="account-grid">
 
-        <!-- ── LEFT COLUMN ── -->
+        <!-- LEFT COLUMN -->
         <div class="account-col-left">
 
             <!-- Profile Card -->
@@ -103,9 +103,9 @@
             </div>
             {% endif %}
 
-        </div>
+        </div><!-- /account-col-left -->
 
-        <!-- ── RIGHT COLUMN ── -->
+        <!-- RIGHT COLUMN -->
         <div class="account-col-right">
 
             <!-- Username -->
@@ -137,7 +137,7 @@
                 </div>
             </div>
 
-            <!-- Email (read-only, clean) -->
+            <!-- Email (read-only) -->
             <div class="account-card">
                 <div class="card-label">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -208,7 +208,7 @@
                 </div>
             </div>
 
-        </div>
+        </div><!-- /account-col-right -->
     </div>
 </div>
 
@@ -290,6 +290,7 @@
         </div>
     </div>
 </div>
+
 <!-- Cancel Subscription Modal -->
 <div id="cancel-sub-modal" class="modal-overlay">
     <div class="modal">
@@ -302,24 +303,12 @@
             </button>
         </div>
         <div class="modal-body">
-            <p style="color:#475569;font-size:15px;line-height:1.6;margin:0 0 24px;">
+            <p class="cancel-sub-text">
                 Tens a certeza que queres cancelar? Mantens o acesso até ao fim do período atual e não serás cobrado novamente.
             </p>
-            <div style="display:flex;gap:12px;">
-                <button id="cancel-sub-confirm-btn" style="
-                    flex:1;padding:10px;border-radius:10px;border:none;cursor:pointer;
-                    background:linear-gradient(135deg,#ef4444,#dc2626);
-                    color:white;font-size:14px;font-weight:600;
-                    box-shadow:0 4px 12px rgba(220,38,38,0.25);
-                    transition:opacity 0.2s;">
-                    Confirmar cancelamento
-                </button>
-                <button class="modal-close" style="
-                    flex:1;padding:10px;border-radius:10px;border:1px solid rgba(59,130,246,0.2);
-                    cursor:pointer;background:white;color:#1e3a8a;
-                    font-size:14px;font-weight:600;transition:opacity 0.2s;">
-                    Manter subscrição
-                </button>
+            <div class="cancel-sub-actions">
+                <button id="cancel-sub-confirm-btn" class="btn-cancel-confirm">Confirmar cancelamento</button>
+                <button class="modal-close btn-cancel-keep">Manter subscrição</button>
             </div>
         </div>
     </div>

@@ -1,46 +1,46 @@
 /* ─── Layout ─────────────────────────────────────────────────────────────── */
 
+/* Only the page-specific overrides that main.css doesn't cover.
+   Removed: min-height, font-family, margin (handled by main.css reset).
+   Removed: logo font-weight, text-decoration (handled by main.css).
+   All hardcoded hex replaced with CSS variables. */
+
 body {
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background: var(--bg, #f8faff);
-    font-family: inherit;
-    margin: 0;
+    background: var(--gray-50);
 }
 
 /* ─── Header ─────────────────────────────────────────────────────────────── */
 
+/* This page uses a frosted-glass header over a light background,
+   overriding the gradient header from main.css. */
 header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.25rem 2rem;
-    border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+    border-bottom: 1px solid rgba(30, 74, 110, 0.1);
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(10px);
 }
 
+/* Smaller, dark logo for light header context */
 .logo {
     font-size: 1rem;
-    font-weight: 700;
-    color: #1e3a8a;
-    text-decoration: none;
+    color: var(--primary);
 }
 
 .logo span {
-    color: #3b82f6;
+    color: var(--accent);
 }
 
+/* Back button uses primary-light text on light background */
 .back-btn {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #3b82f6;
-    text-decoration: none;
-    transition: opacity 0.2s;
+    color: var(--primary-light);
+    transition: opacity var(--transition-fast);
 }
 
 .back-btn:hover {
+    background-color: transparent;
     opacity: 0.7;
 }
 
@@ -51,21 +51,21 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 3rem 1.5rem;
+    padding: 3rem var(--spacing-lg);
 }
 
 /* ─── Card ───────────────────────────────────────────────────────────────── */
 
 .result-card {
-    background: white;
-    border: 1px solid rgba(59, 130, 246, 0.15);
+    background: var(--white);
+    border: 1px solid rgba(30, 74, 110, 0.15);
     border-radius: 24px;
-    padding: 3rem 2.5rem;
+    padding: 3rem var(--spacing-2xl);
     text-align: center;
     max-width: 440px;
     width: 100%;
     box-shadow:
-        0 10px 40px rgba(37, 99, 235, 0.08),
+        0 10px 40px rgba(30, 74, 110, 0.08),
         0 2px 12px rgba(0, 0, 0, 0.04);
 }
 
@@ -78,17 +78,17 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 1.5rem;
+    margin: 0 auto var(--spacing-lg);
     font-size: 2rem;
 }
 
 .result-icon--success {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.25);
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    box-shadow: 0 8px 24px rgba(30, 74, 110, 0.25);
 }
 
 .result-icon--cancel {
-    background: linear-gradient(135deg, #94a3b8, #64748b);
+    background: linear-gradient(135deg, var(--gray-300), var(--gray-500));
     box-shadow: 0 8px 24px rgba(100, 116, 139, 0.2);
 }
 
@@ -97,30 +97,30 @@ main {
 .result-title {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #1e3a8a;
+    color: var(--primary);
     margin: 0 0 0.75rem;
 }
 
 .result-subtitle {
     font-size: 0.9375rem;
-    color: #64748b;
+    color: var(--gray-500);
     line-height: 1.6;
-    margin: 0 0 2rem;
+    margin: 0 0 var(--spacing-xl);
 }
 
 /* ─── Button ─────────────────────────────────────────────────────────────── */
 
 .result-btn {
     display: inline-block;
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    color: white;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    color: var(--white);
     font-size: 0.9375rem;
     font-weight: 600;
-    padding: 0.75rem 2rem;
-    border-radius: 12px;
+    padding: 0.75rem var(--spacing-xl);
+    border-radius: var(--radius-xl);
     text-decoration: none;
-    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
-    transition: opacity 0.2s, transform 0.2s;
+    box-shadow: 0 4px 16px rgba(30, 74, 110, 0.3);
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
 }
 
 .result-btn:hover {

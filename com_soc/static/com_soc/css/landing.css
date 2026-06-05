@@ -2,11 +2,8 @@
    Landing Page Styles
    ========================================== */
 
-body.landing-page {
-    background-color: var(--gray-50);
-}
+body.landing-page { background-color: var(--gray-50); }
 
-/* Main Content */
 .landing-main {
     max-width: 1200px;
     margin: 0 auto;
@@ -24,7 +21,6 @@ body.landing-page {
     margin-bottom: var(--spacing-xl);
 }
 
-/* Side News Columns */
 .side-column {
     display: flex;
     flex-direction: column;
@@ -32,7 +28,7 @@ body.landing-page {
 }
 
 /* ==========================================
-   News Card Styles
+   News Card
    ========================================== */
 .news-card {
     background: var(--white);
@@ -51,9 +47,7 @@ body.landing-page {
     box-shadow: var(--shadow-hover);
 }
 
-.news-card-content {
-    padding: var(--spacing-md);
-}
+.news-card-content { padding: var(--spacing-md); }
 
 .news-card h3 {
     font-size: 1rem;
@@ -74,7 +68,7 @@ body.landing-page {
 }
 
 /* ==========================================
-   Featured News (Center)
+   Featured News (Centre column)
    ========================================== */
 .featured-news {
     grid-row: span 2;
@@ -106,7 +100,7 @@ body.landing-page {
 .featured-image {
     width: 100%;
     height: 280px;
-    background-color: #e8eef3;
+    background-color: var(--gray-100);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -137,7 +131,7 @@ body.landing-page {
 }
 
 /* ==========================================
-   Ver Mais Button Container
+   Ver Mais Button
    ========================================== */
 .ver-mais-container {
     text-align: center;
@@ -145,33 +139,30 @@ body.landing-page {
 }
 
 /* ==========================================
-   Empty State
+   Empty State — extends main.css base
    ========================================== */
-.empty-state {
-    text-align: center;
-    padding: 4rem var(--spacing-xl);
+.landing-main .empty-state {
     background: var(--white);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-sm);
+    padding: 4rem var(--spacing-xl);
 }
 
-.empty-state h2 {
+.landing-main .empty-state h2 {
     color: var(--text-dark);
     margin-bottom: var(--spacing-md);
 }
 
-.empty-state p {
+.landing-main .empty-state p {
     color: var(--gray-600);
     margin-bottom: var(--spacing-xl);
 }
 
 /* ==========================================
-   Responsive Styles
+   Responsive
    ========================================== */
 @media (max-width: 900px) {
-    .news-grid {
-        grid-template-columns: 1fr 1fr;
-    }
+    .news-grid { grid-template-columns: 1fr 1fr; }
 
     .featured-news {
         grid-column: span 2;
@@ -183,34 +174,14 @@ body.landing-page {
         flex-wrap: wrap;
     }
 
-    .news-card {
-        flex: 1 1 calc(50% - 0.75rem);
-        min-width: 200px;
-    }
+    .news-card { flex: 1 1 calc(50% - 0.75rem); min-width: 200px; }
 }
 
 @media (max-width: 600px) {
-    .landing-main {
-        padding: var(--spacing-md);
-    }
-
-    .news-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .featured-news {
-        grid-column: span 1;
-    }
-
-    .side-column {
-        flex-direction: column;
-    }
-
-    .news-card {
-        flex: 1 1 100%;
-    }
-
-    .featured-image {
-        height: 200px;
-    }
+    .landing-main { padding: var(--spacing-md); }
+    .news-grid { grid-template-columns: 1fr; }
+    .featured-news { grid-column: span 1; }
+    .side-column { flex-direction: column; }
+    .news-card { flex: 1 1 100%; }
+    .featured-image { height: 200px; }
 }

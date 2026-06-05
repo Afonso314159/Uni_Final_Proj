@@ -10,9 +10,7 @@
 }
 
 /* ── Page Header ── */
-.account-header {
-    margin-bottom: var(--spacing-xl);
-}
+.account-header { margin-bottom: var(--spacing-xl); }
 
 .account-header-title {
     font-size: 1.625rem;
@@ -45,13 +43,8 @@
     transition: box-shadow var(--transition-fast);
 }
 
-.account-card:last-child {
-    margin-bottom: 0;
-}
-
-.account-card:hover {
-    box-shadow: var(--shadow-sm);
-}
+.account-card:last-child { margin-bottom: 0; }
+.account-card:hover { box-shadow: var(--shadow-sm); }
 
 .card-label {
     display: flex;
@@ -73,9 +66,7 @@
 }
 
 /* ── Profile Card ── */
-.profile-card {
-    text-align: center;
-}
+.profile-card { text-align: center; }
 
 .profile-avatar-wrap {
     position: relative;
@@ -146,13 +137,9 @@
     stroke-width: 2;
 }
 
-.avatar-file-input {
-    display: none;
-}
+.avatar-file-input { display: none; }
 
-.profile-info {
-    margin-bottom: var(--spacing-md);
-}
+.profile-info { margin-bottom: var(--spacing-md); }
 
 .profile-username {
     font-size: 1.25rem;
@@ -174,7 +161,7 @@
 .role-registado  { background: var(--gray-100); color: var(--gray-500); }
 .role-subscritor { background: #f3e8ff; color: #7c3aed; }
 .role-editor     { background: #dbeafe; color: #1d4ed8; }
-.role-admin      { background: #fee2e2; color: #dc2626; }
+.role-admin      { background: #fee2e2; color: var(--error-text); }
 
 .profile-since {
     display: flex;
@@ -303,6 +290,79 @@
     box-shadow: var(--shadow-sm);
 }
 
+/* ── Cancel Subscription Button ── */
+.sub-cancel-btn {
+    width: 100%;
+    margin-top: var(--spacing-md);
+    padding: 10px;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(220, 38, 38, 0.25);
+    background: var(--white);
+    color: var(--error-text);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.sub-cancel-btn:hover:not(:disabled) {
+    background: var(--error-bg);
+    border-color: rgba(220, 38, 38, 0.5);
+}
+
+.sub-cancel-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+/* ── Cancel Subscription Modal ── */
+.cancel-sub-text {
+    font-size: 0.9375rem;
+    color: var(--gray-600);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-lg);
+}
+
+.cancel-sub-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-end;
+}
+
+.btn-cancel-confirm {
+    padding: 9px 20px;
+    background: var(--error-text);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity var(--transition-fast);
+}
+
+.btn-cancel-confirm:hover { opacity: 0.9; }
+
+.btn-cancel-keep {
+    padding: 9px 20px;
+    background: transparent;
+    color: var(--gray-500);
+    border: 1.5px solid var(--gray-100);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all var(--transition-fast);
+}
+
+.btn-cancel-keep:hover {
+    border-color: var(--gray-300);
+    color: var(--text-dark);
+}
+
 /* ── Field Rows ── */
 .field-row {
     display: flex;
@@ -318,9 +378,7 @@
     color: var(--text-dark);
 }
 
-.field-value--muted {
-    color: var(--gray-500);
-}
+.field-value--muted { color: var(--gray-500); }
 
 .field-edit-btn {
     display: flex;
@@ -351,7 +409,6 @@
     stroke-width: 2;
 }
 
-/* Inline edit row */
 .field-edit-row {
     padding-top: var(--spacing-md);
     border-top: 1px solid var(--gray-100);
@@ -521,9 +578,7 @@
     margin-bottom: var(--spacing-lg);
 }
 
-.pw-field-group {
-    margin-bottom: var(--spacing-lg);
-}
+.pw-field-group { margin-bottom: var(--spacing-lg); }
 
 .pw-field-group label {
     display: block;
@@ -579,6 +634,7 @@
     stroke-width: 1.75;
 }
 
+/* Password strength — use .strength-bar / .strength-bar-fill from main.css */
 .pw-strength-bar {
     height: 4px;
     background: var(--gray-100);
@@ -686,7 +742,7 @@
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #16a34a, #22c55e);
+    background: linear-gradient(135deg, var(--success-text), #22c55e);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -709,25 +765,6 @@
 }
 
 .pw-success-state p { color: var(--gray-500); font-size: 0.9375rem; }
-
-/* ── Responsive ── */
-@media (max-width: 900px) {
-    .account-grid { grid-template-columns: 1fr; }
-
-    .account-col-left {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: var(--spacing-lg);
-    }
-
-    .account-col-left .account-card { margin-bottom: 0; }
-}
-
-@media (max-width: 640px) {
-    .account-page { padding: var(--spacing-lg) var(--spacing-md); }
-    .account-col-left { grid-template-columns: 1fr; }
-    .account-stats-row { grid-template-columns: 1fr; }
-}
 
 /* ── Toast ── */
 .account-toast {
@@ -765,26 +802,21 @@
     border: 1px solid var(--error-border);
 }
 
-.sub-cancel-btn {
-    width: 100%;
-    margin-top: 16px;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid rgba(220, 38, 38, 0.25);
-    background: white;
-    color: #dc2626;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
+/* ── Responsive ── */
+@media (max-width: 900px) {
+    .account-grid { grid-template-columns: 1fr; }
+
+    .account-col-left {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-lg);
+    }
+
+    .account-col-left .account-card { margin-bottom: 0; }
 }
 
-.sub-cancel-btn:hover:not(:disabled) {
-    background: #fff5f5;
-    border-color: rgba(220, 38, 38, 0.5);
-}
-
-.sub-cancel-btn:disabled {
-    opacity: 0.5;
-    cursor: default;
+@media (max-width: 640px) {
+    .account-page { padding: var(--spacing-lg) var(--spacing-md); }
+    .account-col-left { grid-template-columns: 1fr; }
+    .account-stats-row { grid-template-columns: 1fr; }
 }

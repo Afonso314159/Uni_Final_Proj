@@ -298,35 +298,26 @@ header.transparent {
     }
 }
 
-
+/* ==========================================
+   Toast Notification
+   ========================================== */
 .toast {
     position: fixed;
     top: 24px;
     right: 24px;
-
     background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(14px);
-
     border: 1px solid rgba(59, 130, 246, 0.18);
-
-    border-radius: 16px;
-
+    border-radius: var(--radius-2xl);
     padding: 14px 18px;
-
     box-shadow:
         0 10px 30px rgba(37, 99, 235, 0.12),
         0 2px 10px rgba(0, 0, 0, 0.04);
-
     z-index: 9999;
-
     opacity: 0;
     transform: translateY(-10px) scale(0.96);
-
     pointer-events: none;
-
-    transition:
-        opacity 0.25s ease,
-        transform 0.25s ease;
+    transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
 .toast.show {
@@ -343,28 +334,160 @@ header.transparent {
 .toast-icon {
     width: 28px;
     height: 28px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-
-    color: white;
-
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    color: var(--white);
     border-radius: 999px;
-
     font-size: 14px;
     font-weight: 700;
-
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    flex-shrink: 0;
 }
 
 .toast-message {
-    color: #1e3a8a;
-
+    color: var(--primary-dark);
     font-size: 14px;
     font-weight: 600;
-
     letter-spacing: -0.01em;
+}
+
+/* Toast semantic variants — used by utils.js showToast() */
+.toast--success {
+    border-color: var(--success-border);
+}
+.toast--success .toast-icon {
+    background: linear-gradient(135deg, var(--success-text), #15803d);
+}
+.toast--success .toast-message {
+    color: #14532d;
+}
+
+.toast--error {
+    border-color: var(--error-border);
+}
+.toast--error .toast-icon {
+    background: linear-gradient(135deg, var(--error-text), #b91c1c);
+}
+.toast--error .toast-message {
+    color: #7f1d1d;
+}
+
+.toast--info .toast-icon {
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+}
+
+/* ==========================================
+   Shared Utility Classes
+   ==========================================
+   These replace duplicated rules that were
+   scattered across individual page stylesheets.
+   ========================================== */
+
+/* -- Page content wrapper --
+   Replaces .editor-feed, .notif-page, .settings-page etc.
+   Usage: add class="page-content" alongside the existing
+   semantic class; the individual file only overrides what differs
+   (e.g. a different max-width). */
+.page-content {
+    flex: 1;
+    padding: var(--spacing-xl);
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+}
+
+/* -- Pill badge / count --
+   Replaces .editor-count, .notif-count, .comments-count etc.
+   Usage: class="badge-pill" or class="badge-pill editor-count" */
+.badge-pill {
+    background: var(--primary);
+    color: var(--white);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    display: inline-block;
+}
+
+/* -- Section header with primary underline --
+   Replaces .editor-section-header, .settings-header etc.
+   Usage: class="section-header" */
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid var(--primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+/* -- AI risk level modifiers --
+   Replaces .ai-risk-badge--* in editor.css and
+   .settings-ai-badge--* in definicoes.css.
+   Usage: class="<shape-class> risk-low" */
+.risk-ideal,
+.risk-low    { background: #d1fae5; color: #065f46; }
+.risk-medium { background: #fef9c3; color: #854d0e; }
+.risk-high   { background: #ffedd5; color: #9a3412; }
+.risk-trash  { background: #fee2e2; color: #991b1b; }
+
+/* -- Password strength bar --
+   Replaces .strength-bar* in auth.css and
+   .pw-strength-* in account.css. */
+.strength-bar {
+    height: 4px;
+    background: var(--gray-100);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: var(--spacing-xs);
+}
+
+.strength-bar-fill {
+    height: 100%;
+    width: 0;
+    border-radius: 2px;
+    transition: width var(--transition-normal), background-color var(--transition-normal);
+}
+
+.strength-bar-fill.weak   { width: 33%;  background: var(--error-text); }
+.strength-bar-fill.medium { width: 66%;  background: #f59e0b; }
+.strength-bar-fill.strong { width: 100%; background: var(--success-text); }
+
+.strength-text {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+}
+.strength-text.weak   { color: var(--error-text); }
+.strength-text.medium { color: #f59e0b; }
+.strength-text.strong { color: var(--success-text); }
+
+/* -- Empty state --
+   Replaces .empty-state in dashboard.css, landing.css, noticia.css.
+   Page-specific files keep only overrides (padding, font). */
+.empty-state {
+    text-align: center;
+    padding: var(--spacing-2xl) var(--spacing-xl);
+    color: var(--gray-500);
+}
+
+.empty-state svg {
+    width: 48px;
+    height: 48px;
+    margin-bottom: var(--spacing-md);
+    opacity: 0.4;
+}
+
+.empty-state h3 {
+    font-size: 1.125rem;
+    color: var(--text-dark);
+    margin-bottom: var(--spacing-sm);
+}
+
+.empty-state p {
+    font-size: 0.9375rem;
 }

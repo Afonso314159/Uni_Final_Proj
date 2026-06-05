@@ -1,53 +1,42 @@
+{% extends "registration/auth_base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - ENIDH Comunicação Social</title>
-    <link rel="stylesheet" href="{% static 'com_soc/css/main.css' %}">
-    <link rel="stylesheet" href="{% static 'com_soc/css/auth.css' %}">
-</head>
-<body class="auth-page">
-    <header>
-        <a href="{% url 'landing_page' %}" class="logo">ENIDH - <span>Comunicação Social</span></a>
-        <a href="{% url 'landing_page' %}" class="back-btn">← Voltar</a>
-    </header>
 
-    <main class="auth-main">
-        <div class="auth-container">
-            <h2>Iniciar Sessão</h2>
-            <p class="auth-subtitle">Bem-vindo de volta! Entre na sua conta.</p>
+{% block title %}Login - ENIDH Comunicação Social{% endblock %}
 
-            {% if form.errors %}
-            <div class="alert alert-error">
-                Nome de utilizador ou palavra-passe incorretos.
-            </div>
-            {% endif %}
+{% block content %}
+<div class="auth-container">
+    <h2>Iniciar Sessão</h2>
+    <p class="auth-subtitle">Bem-vindo de volta! Entre na sua conta.</p>
 
-            <form method="post" id="login-form" novalidate>
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="id_username">Nome de Utilizador</label>
-                    <input type="text" name="username" id="id_username" placeholder="O seu nome de utilizador" required autofocus>
-                </div>
-                <div class="form-group">
-                    <label for="id_password">Palavra-passe</label>
-                    <input type="password" name="password" id="id_password" placeholder="A sua palavra-passe" required>
-                </div>
-                <button type="submit" id="submit-btn" class="btn btn-primary btn-full">Entrar</button>
+    {% if form.errors %}
+    <div class="alert alert-error">
+        Nome de utilizador ou palavra-passe incorretos.
+    </div>
+    {% endif %}
 
-                <p class="auth-link" style="margin-top: var(--spacing-md);">
-                    <a href="{% url 'password_reset' %}">Esqueceu-se da palavra-passe?</a>
-                </p>
-            </form>
-
-            <p class="auth-link">
-                Não tem conta? <a href="{% url 'register' %}">Registe-se aqui</a>
-            </p>
+    <form method="post" id="login-form" novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_username">Nome de Utilizador</label>
+            <input type="text" name="username" id="id_username" placeholder="O seu nome de utilizador" required autofocus>
         </div>
-    </main>
+        <div class="form-group">
+            <label for="id_password">Palavra-passe</label>
+            <input type="password" name="password" id="id_password" placeholder="A sua palavra-passe" required>
+        </div>
+        <button type="submit" id="submit-btn" class="btn btn-primary btn-full">Entrar</button>
 
-    <script src="{% static 'com_soc/js/login.js' %}"></script>
-</body>
-</html>
+        <p class="auth-link auth-link--spaced">
+            <a href="{% url 'password_reset' %}">Esqueceu-se da palavra-passe?</a>
+        </p>
+    </form>
+
+    <p class="auth-link">
+        Não tem conta? <a href="{% url 'register' %}">Registe-se aqui</a>
+    </p>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'com_soc/js/login.js' %}"></script>
+{% endblock %}

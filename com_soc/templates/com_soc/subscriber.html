@@ -2,153 +2,9 @@
 {% load static %}
 
 {% block content %}
-<section class="news-feed">
-    <div class="news-feed-header">
-        <h1>{{ page_title }}</h1>
-        <p>{{ page_subtitle }}</p>
-    </div>
-
-    <!-- Two-column layout: cards on left, filter sidebar on right -->
-    <div class="news-layout">
-
-        <!-- LEFT: filter top bar + news cards -->
-        <div class="news-main-col">
-
-            <form id="news-filter-form" method="get" action="">
-                <!-- Hidden cat inputs synced by JS -->
-                <input type="hidden" name="cat" id="filter-cat-1" value="{% if filter_cats|length >= 1 %}{{ filter_cats.0 }}{% endif %}">
-                <input type="hidden" name="cat" id="filter-cat-2" value="{% if filter_cats|length >= 2 %}{{ filter_cats.1 }}{% endif %}">
-                <input type="hidden" name="cat" id="filter-cat-3" value="{% if filter_cats|length >= 3 %}{{ filter_cats.2 }}{% endif %}">
-                <!-- include_public hidden input — toggled by JS -->
-                <input type="hidden" name="include_public" id="filter-include-public-val" value="{% if filter_include_public %}1{% endif %}">
-
-                <div class="news-filter-top-row">
-                    <div class="news-filter-search-wrap">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
-                        </svg>
-                        <input
-                            type="text"
-                            name="q"
-                            id="filter-q"
-                            class="news-filter-search"
-                            placeholder="Pesquisar por título…"
-                            value="{{ filter_q }}"
-                            autocomplete="off"
-                        >
-                    </div>
-
-                    <div class="news-filter-dates">
-                        <span class="news-filter-date-label">De</span>
-                        <input type="date" name="date_from" id="filter-date-from" class="news-filter-date" value="{{ filter_date_from }}">
-                        <span class="news-filter-date-sep">—</span>
-                        <input type="date" name="date_to" id="filter-date-to" class="news-filter-date" value="{{ filter_date_to }}">
-                        <button type="button" id="filter-date-clear" class="news-filter-date-clear{% if filter_date_from or filter_date_to %} visible{% endif %}" title="Limpar datas">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                {% if filter_active %}
-                <div class="news-filter-status-row">
-                    <span class="news-filter-results-count">
-                        <strong>{{ page_obj.paginator.count }}</strong> resultado{% if page_obj.paginator.count != 1 %}s{% endif %} encontrado{% if page_obj.paginator.count != 1 %}s{% endif %}
-                    </span>
-                    <button type="button" class="news-filter-clear-all" id="filter-clear-all">Limpar filtros</button>
-                </div>
-                {% endif %}
-            </form>
-
-            {% if news_list %}
-                {% for news in news_list %}
-                    <a href="{% url 'noticia' news.id %}" class="news-card">
-                        <h2 class="news-card-title">{{ news.titulo }}</h2>
-                        <p class="news-card-description">{{ news.corpo_texto|truncatewords:30 }}</p>
-                        <div class="news-card-meta">
-                            {% if news.acesso == 'premium' %}
-                                <span class="news-card-badge badge-premium">Premium</span>
-                            {% else %}
-                                <span class="news-card-badge badge-public">Público</span>
-                            {% endif %}
-                            {% if news.data_publicacao %}
-                                <span>{{ news.data_publicacao|date:"d M Y" }}</span>
-                            {% endif %}
-                            {% if news.autor %}
-                                <span>Por {{ news.autor.username }}</span>
-                            {% endif %}
-                        </div>
-                    </a>
-                {% endfor %}
-            {% else %}
-                <div class="empty-state">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z" />
-                    </svg>
-                    <h3>Sem notícias disponíveis</h3>
-                    <p>{% if filter_active %}Nenhuma notícia corresponde aos filtros selecionados.{% else %}Não há notícias exclusivas de momento.{% endif %}</p>
-                </div>
-            {% endif %}
-
-            {% if page_obj.paginator.num_pages > 1 %}
-            <div class="news-pagination">
-                {% if page_obj.has_previous %}
-                    <a href="?{% if filter_q %}q={{ filter_q }}&{% endif %}{% if filter_date_from %}date_from={{ filter_date_from }}&{% endif %}{% if filter_date_to %}date_to={{ filter_date_to }}&{% endif %}{% for c in filter_cats %}cat={{ c }}&{% endfor %}{% if filter_include_public %}include_public=1&{% endif %}page={{ page_obj.previous_page_number }}" class="news-page-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
-                    </a>
-                {% else %}
-                    <span class="news-page-btn disabled"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg></span>
-                {% endif %}
-                <span class="news-page-info">Página <strong>{{ page_obj.number }}</strong> de <strong>{{ page_obj.paginator.num_pages }}</strong></span>
-                {% if page_obj.has_next %}
-                    <a href="?{% if filter_q %}q={{ filter_q }}&{% endif %}{% if filter_date_from %}date_from={{ filter_date_from }}&{% endif %}{% if filter_date_to %}date_to={{ filter_date_to }}&{% endif %}{% for c in filter_cats %}cat={{ c }}&{% endfor %}{% if filter_include_public %}include_public=1&{% endif %}page={{ page_obj.next_page_number }}" class="news-page-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
-                    </a>
-                {% else %}
-                    <span class="news-page-btn disabled"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg></span>
-                {% endif %}
-            </div>
-            {% endif %}
-
-        </div><!-- /news-main-col -->
-
-        <!-- RIGHT: filter sidebar -->
-        <aside class="news-filter-sidebar">
-            <div class="news-filter-sidebar-section">
-                <div class="news-filter-section-label">
-                    Categorias <span class="news-filter-section-hint">até 3</span>
-                </div>
-                <div class="news-filter-chips" id="filter-chips">
-                    {% for val, label in categories %}
-                        <button
-                            type="button"
-                            class="news-filter-chip{% if val in filter_cats %} active{% endif %}{% if filter_cats|length >= 3 and val not in filter_cats %} disabled{% endif %}"
-                            data-value="{{ val }}"
-                        >{{ label }}</button>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <!-- Include public news toggle -->
-            <div class="news-filter-sidebar-section">
-                <div
-                    class="news-filter-toggle-row{% if filter_include_public %} checked{% endif %}"
-                    id="filter-toggle-row"
-                    title="Mostrar também notícias públicas"
-                >
-                    <div class="news-filter-toggle-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
-                        </svg>
-                    </div>
-                    <span class="news-filter-toggle-text">Incluir notícias públicas</span>
-                </div>
-            </div>
-        </aside>
-
-    </div><!-- /news-layout -->
-</section>
+{% with empty_state_msg="Não há notícias exclusivas de momento." show_include_public=True %}
+    {% include "com_soc/includes/news_feed_content.html" %}
+{% endwith %}
 
 <!-- Chat FAB -->
 <button class="chat-fab" id="chat-fab" title="Chat Room" aria-label="Abrir chat">
@@ -160,9 +16,9 @@
 <div id="chat-modal" class="modal-overlay" data-username="{{ request.user.username }}">
     <div class="modal chat-modal">
         <div class="modal-header">
-            <div style="display:flex; align-items:center; gap: 10px;">
-                <h2>💬 Chat Room</h2>
-                <span id="chat-online-count" style="font-size:0.8rem; color: var(--gray-400); font-weight:500;"></span>
+            <div class="modal-header-left">
+                <h2>Chat Room</h2>
+                <span id="chat-online-count" class="chat-online-count"></span>
             </div>
             <button class="modal-close">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">

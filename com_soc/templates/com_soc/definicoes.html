@@ -3,17 +3,16 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'com_soc/css/definicoes.css' %}">
-<link rel="stylesheet" href="{% static 'com_soc/css/main.css' %}">
 {% endblock %}
 
 {% block content %}
-<section class="settings-page">
+<section class="page-content">
 
     <div class="settings-header">
         <h1 class="settings-title">Definições</h1>
     </div>
 
-    <!-- ===================== Aparência ===================== -->
+    <!-- Aparência -->
     <div class="settings-section">
         <h2 class="settings-section-title">Aparência</h2>
 
@@ -39,7 +38,7 @@
         </div>
     </div>
 
-    <!-- ===================== Idioma ===================== -->
+    <!-- Idioma -->
     <div class="settings-section">
         <h2 class="settings-section-title">Idioma</h2>
 
@@ -59,7 +58,7 @@
         </div>
     </div>
 
-    <!-- ===================== Moderação AI (admin only) ===================== -->
+    <!-- Moderação AI (admin only) -->
     {% if request.user.is_superuser %}
     <div class="settings-section settings-section--admin">
 
@@ -73,7 +72,6 @@
         </p>
 
         <div class="settings-ai-grid">
-
             <div class="settings-ai-row">
                 <div class="settings-ai-info">
                     <span class="settings-ai-badge settings-ai-badge--ideal">IDEAL</span>
@@ -125,7 +123,6 @@
                 </div>
                 <span class="settings-ai-fixed">Automático</span>
             </div>
-
         </div>
 
         <div class="settings-save-row">
