@@ -127,3 +127,22 @@ main {
     opacity: 0.9;
     transform: translateY(-1px);
 }
+
+/* ==========================================
+   Dark Theme — Checkout Result Pages
+   ========================================== */
+
+/* Frosted-glass header is hardcoded rgba(255,255,255,...) */
+[data-theme="dark"] header {
+    background: rgba(18, 28, 40, 0.92);
+    border-bottom-color: rgba(91, 163, 217, 0.12);
+}
+
+[data-theme="dark"] .logo {
+    color: var(--accent);
+}
+
+[data-theme="dark"] .result-card {
+    background-color: #16202d;
+    border-color: rgba(91, 163, 217, 0.12);
+}

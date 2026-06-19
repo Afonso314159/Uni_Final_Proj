@@ -6,7 +6,9 @@ from datetime import timedelta
 from .models import ChatMensagem
 
 class ChatConsumer(AsyncWebsocketConsumer):
-    online_users = set()
+    # Maps user_id -> channel_name so reconnects overwrite the old entry
+    # instead of stacking ghost entries in a plain set.
+    online_users = {}
 
     async def connect(self):
         user = self.scope['user']
@@ -23,6 +25,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return
 
         self.room_group_name = 'chat_subscribers'
+        self.user_id = user.id  # kept for disconnect lookup
 
         await self.channel_layer.group_add(
             self.room_group_name,
@@ -30,7 +33,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
         await self.accept()
 
-        ChatConsumer.online_users.add(self.channel_name)
+        ChatConsumer.online_users[self.user_id] = self.channel_name
         await self.broadcast_online_count()
 
         mensagens = await self.get_recent_messages()
@@ -44,7 +47,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         if hasattr(self, 'room_group_name'):
-            ChatConsumer.online_users.discard(self.channel_name)
+            # Only remove if this channel is still the active one for this user.
+            # Guards against a stale disconnect firing after the user has already
+            # reconnected (which would wrongly erase the new connection).
+            if ChatConsumer.online_users.get(self.user_id) == self.channel_name:
+                del ChatConsumer.online_users[self.user_id]
             await self.broadcast_online_count()
             await self.channel_layer.group_discard(
                 self.room_group_name,
@@ -54,6 +61,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         user = self.scope['user']
         data = json.loads(text_data)
+
+        # Heartbeat — reply with pong so the client knows the connection is alive
+        if data.get('type') == 'ping':
+            await self.send(text_data=json.dumps({'type': 'pong'}))
+            return
+
         message = data.get('message', '').strip()
 
         if not message:

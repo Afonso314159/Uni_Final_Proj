@@ -203,3 +203,23 @@
 
     .settings-ai-row { flex-wrap: wrap; }
 }
+
+/* ==========================================
+   Dark Theme — Definições Page
+   ========================================== */
+
+/* Section cards */
+[data-theme="dark"] .settings-section {
+    background-color: #16202d;
+}
+
+/* Active toggle button pill (uses --white as bg in light) */
+[data-theme="dark"] .settings-toggle-btn.active {
+    background-color: #1e2d3f;
+    color: var(--accent);
+}
+
+/* Number inputs */
+[data-theme="dark"] .settings-ai-input {
+    background-color: #16202d;
+}

@@ -153,3 +153,16 @@
 @media (max-width: 640px) {
     /* .page-content responsive padding is handled in main.css */
 }
+
+/* ==========================================
+   Dark Theme — Notifications Page
+   ========================================== */
+
+[data-theme="dark"] .notif-item {
+    background-color: #16202d;
+}
+
+/* Unread item tinted background */
+[data-theme="dark"] .notif-item--unread {
+    background-color: rgba(91, 163, 217, 0.07);
+}

@@ -185,3 +185,16 @@ body.landing-page { background-color: var(--gray-50); }
     .news-card { flex: 1 1 100%; }
     .featured-image { height: 200px; }
 }
+
+/* ==========================================
+   Dark Theme — Landing Page
+   ========================================== */
+
+[data-theme="dark"] .news-card,
+[data-theme="dark"] .featured-news {
+    background-color: #16202d;
+}
+
+[data-theme="dark"] .landing-main .empty-state {
+    background-color: #16202d;
+}

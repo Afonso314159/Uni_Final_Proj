@@ -820,3 +820,51 @@
     .account-col-left { grid-template-columns: 1fr; }
     .account-stats-row { grid-template-columns: 1fr; }
 }
+
+/* ==========================================
+   Dark Theme — Account Page
+   ========================================== */
+
+/* All card surfaces */
+[data-theme="dark"] .account-card,
+[data-theme="dark"] .account-stat-card {
+    background-color: #16202d;
+}
+
+/* Subscription card has a gradient ending in #f8fbff — reset to flat */
+[data-theme="dark"] .subscription-card {
+    background: #16202d;
+}
+
+/* Sub dates info box */
+[data-theme="dark"] .sub-dates {
+    background-color: #1e2d3f;
+    border-color: #1e2d3f;
+}
+
+/* Cancel button has explicit --white background */
+[data-theme="dark"] .sub-cancel-btn {
+    background-color: transparent;
+}
+
+/* Role badges use hardcoded light pastel backgrounds */
+[data-theme="dark"] .role-registado  { background: #1e2d3f;                      color: var(--gray-500); }
+[data-theme="dark"] .role-subscritor { background: rgba(124, 58, 237, 0.18);     color: #c4b5fd; }
+[data-theme="dark"] .role-editor     { background: rgba(29,  78, 216, 0.18);     color: #93c5fd; }
+[data-theme="dark"] .role-admin      { background: rgba(239, 68,  68, 0.15);     color: #fca5a5; }
+
+/* Field input (background is transparent, fine; text colour handled by var) */
+
+/* Password modal */
+[data-theme="dark"] .pw-input {
+    color: var(--text-dark);
+}
+
+/* Account page toast */
+[data-theme="dark"] .account-toast--success {
+    background: rgba(34, 197, 94, 0.12);
+}
+
+[data-theme="dark"] .account-toast--error {
+    background: rgba(239, 68, 68, 0.12);
+}

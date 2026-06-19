@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from celery.schedules import crontab
 
 load_dotenv('.env.local')
 
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'channels',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -156,10 +158,17 @@ DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER')
 ASGI_APPLICATION = 'config.routing.application'
 
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [('redis', 6379)],
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [{
+                "host": "redis",
+                "port": 6379,
+                "socket_timeout": None,
+                "socket_connect_timeout": 5,
+                "socket_keepalive": True,
+                "retry_on_timeout": True,
+            }],
         },
     },
 }
@@ -171,3 +180,16 @@ STRIPE_SECRET_KEY      = os.environ.get('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_SECRET  = os.environ.get('STRIPE_WEBHOOK_SECRET')
 STRIPE_PRICE_MENSAL    = os.environ.get('STRIPE_PRICE_MENSAL')
 STRIPE_PRICE_ANUAL     = os.environ.get('STRIPE_PRICE_ANUAL')
+
+
+
+########################################################
+
+CELERY_BROKER_URL = os.getenv('REDIS_URL', 'redis://redis:6379/0')
+CELERY_RESULT_BACKEND = os.getenv('REDIS_URL', 'redis://redis:6379/0')
+CELERY_BEAT_SCHEDULE = {
+    'enviar-avisos-renovacao': {
+        'task': 'com_soc.tasks.enviar_avisos_renovacao',
+        'schedule': crontab(hour=8, minute=0),  # every day at 8am
+    },
+}

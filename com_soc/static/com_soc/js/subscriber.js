@@ -14,10 +14,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const username = chatModal.dataset.username;
     let socket = null;
+    let pingInterval = null;
+    let intentionalClose = false;  // true only when the user clicks X
+    let chatOpen = false;
 
     // Open chat
     chatFab.addEventListener('click', () => {
         openModal(chatModal);
+        chatOpen = true;
+        intentionalClose = false;
         if (!socket || socket.readyState === WebSocket.CLOSED) {
             chatMessages.innerHTML = '';
             connectWebSocket();
@@ -25,9 +30,11 @@ document.addEventListener('DOMContentLoaded', function () {
         chatInput.focus();
     });
 
-    // Close chat — disconnect WebSocket
+    // Close chat — mark as intentional so onclose doesn't reconnect
     chatModal.querySelectorAll('.modal-close').forEach(btn => {
         btn.addEventListener('click', () => {
+            intentionalClose = true;
+            chatOpen = false;
             closeModal(chatModal);
             if (socket) socket.close();
         });
@@ -37,6 +44,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
         socket = new WebSocket(`${protocol}://${window.location.host}/ws/chat/`);
 
+        // Ping every 25s to prevent idle timeout from dropping the connection
+        pingInterval = setInterval(() => {
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({ type: 'ping' }));
+            }
+        }, 25000);
+
         socket.onmessage = (e) => {
             const data = JSON.parse(e.data);
             if (data.type === 'message') {
@@ -44,10 +58,22 @@ document.addEventListener('DOMContentLoaded', function () {
             } else if (data.type === 'online_count') {
                 chatOnlineCount.textContent = `${data.count} online`;
             }
+            // 'pong' is silently ignored — it just confirms the line is alive
         };
 
         socket.onclose = () => {
+            clearInterval(pingInterval);
             if (chatOnlineCount) chatOnlineCount.textContent = '';
+
+            // Auto-reconnect only on unexpected drops while the chat is open
+            if (!intentionalClose && chatOpen) {
+                setTimeout(() => {
+                    if (!intentionalClose && chatOpen) {
+                        chatMessages.innerHTML = '';
+                        connectWebSocket();
+                    }
+                }, 2000);
+            }
         };
     }
 

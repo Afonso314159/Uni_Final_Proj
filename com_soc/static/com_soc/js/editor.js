@@ -144,7 +144,7 @@ function initEditorPage() {
 
             content.innerHTML = `
                 <div class="ai-eval-risk-header">
-                    <span class="ai-risk-badge ai-risk-badge--${riskLevel} ai-risk-badge--lg">
+                    <span class="ai-risk-badge risk-${riskLevel} ai-risk-badge--lg">
                         ${riskLevel.toUpperCase()}
                     </span>
                 </div>

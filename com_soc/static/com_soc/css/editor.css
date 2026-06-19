@@ -307,3 +307,53 @@
     padding: var(--spacing-sm) var(--spacing-md);
     border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
+
+/* ==========================================
+   Dark Theme — Editor Page
+   ========================================== */
+
+/* Article rows */
+[data-theme="dark"] .editor-row {
+    background-color: #16202d;
+}
+
+/* Edit button hover bg */
+[data-theme="dark"] .editor-btn--edit:hover {
+    background-color: #1e2d3f;
+}
+
+/* Empty state placeholder card */
+[data-theme="dark"] .editor-empty {
+    background-color: #16202d;
+    border-color: #1e2d3f;
+}
+
+/* AI eval score bar track */
+[data-theme="dark"] .ai-eval-bar {
+    background: #1e2d3f;
+}
+
+/* AI eval recommendation blockquote */
+[data-theme="dark"] .ai-eval-recommendation {
+    background: #1e2d3f;
+}
+
+/* Color the bar green→red based on the score (0 = green, 100 = red) */
+.ai-eval-bar-fill {
+    background: color-mix(in oklch, #ef4444 calc(var(--bar-score) * 1%), #22c55e);
+}
+
+/* Fallback for browsers without color-mix support */
+@supports not (background: color-mix(in oklch, red, green)) {
+    .ai-eval-bar-fill {
+        background: var(--primary);
+    }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .editor-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

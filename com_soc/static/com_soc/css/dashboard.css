@@ -1285,3 +1285,59 @@
         height: 54px;
     }
 }
+
+/* ==========================================
+   Dark Theme — Dashboard Surface Overrides
+   These patch every element that uses var(--white)
+   as a background, since --white is kept as #fff
+   globally to protect sidebar/header icon colours.
+   ========================================== */
+
+/* Shared surface colour — all cards and panes */
+[data-theme="dark"] .top-bar,
+[data-theme="dark"] .modal,
+[data-theme="dark"] .news-card,
+[data-theme="dark"] .news-filter-sidebar-section,
+[data-theme="dark"] .news-page-btn,
+[data-theme="dark"] .news-create-card {
+    background-color: #16202d;
+}
+
+/* Search & date inputs have explicit white backgrounds */
+[data-theme="dark"] .news-filter-search,
+[data-theme="dark"] .news-filter-date {
+    background-color: #16202d;
+    color: var(--text-dark);
+}
+
+/* Incoming chat bubbles */
+[data-theme="dark"] .chat-msg--theirs .chat-msg-bubble {
+    background: #1e2d3f;
+    color: var(--text-dark);
+}
+
+/* News-create form title input inherits card bg, needs text colour */
+[data-theme="dark"] .news-create-title-input {
+    color: var(--text-dark);
+}
+
+/* Notification count badge inside top-bar (white bg, primary text) */
+[data-theme="dark"] .notification-badge {
+    background-color: var(--accent);
+}
+
+/* Modal close hover */
+[data-theme="dark"] .modal-close:hover {
+    background-color: #1e2d3f;
+    color: var(--text-dark);
+}
+
+/* Date-clear button */
+[data-theme="dark"] .news-filter-date-clear {
+    background: #1e2d3f;
+}
+
+/* Pagination "current page" info */
+[data-theme="dark"] .news-page-info strong {
+    color: var(--text-dark);
+}

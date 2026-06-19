@@ -26,12 +26,25 @@ services:
     image: redis:7-alpine
     restart: unless-stopped
 
-  cron:
+  worker:
+      build: .
+      restart: unless-stopped
+      command: celery -A config worker -l info
+      depends_on:
+        - db
+        - redis
+      env_file:
+        - .env.local
+      volumes:
+        - .:/app:z
+
+  beat:
     build: .
     restart: unless-stopped
-    command: sh -c "while true; do python manage.py enviar_avisos_renovacao; sleep 86400; done"
+    command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
     depends_on:
       - db
+      - redis
     env_file:
       - .env.local
     volumes:

@@ -261,3 +261,13 @@
         padding: var(--spacing-md);
     }
 }
+
+/* ==========================================
+   Dark Theme — Subscription Ad Page
+   ========================================== */
+
+/* Feature rows and plan cards */
+[data-theme="dark"] .sub-feature,
+[data-theme="dark"] .sub-plan {
+    background-color: #16202d;
+}

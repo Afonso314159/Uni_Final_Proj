@@ -38,26 +38,6 @@
         </div>
     </div>
 
-    <!-- Idioma -->
-    <div class="settings-section">
-        <h2 class="settings-section-title">Idioma</h2>
-
-        <div class="settings-row">
-            <div class="settings-row-info">
-                <span class="settings-row-label">Língua da interface</span>
-                <span class="settings-row-desc">Alterna entre português e inglês</span>
-            </div>
-            <div class="settings-toggle" id="language-toggle">
-                <button class="settings-toggle-btn active" data-value="pt">
-                    🇵🇹 Português
-                </button>
-                <button class="settings-toggle-btn" data-value="en">
-                    🇬🇧 English
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Moderação AI (admin only) -->
     {% if request.user.is_superuser %}
     <div class="settings-section settings-section--admin">
@@ -74,7 +54,7 @@
         <div class="settings-ai-grid">
             <div class="settings-ai-row">
                 <div class="settings-ai-info">
-                    <span class="settings-ai-badge settings-ai-badge--ideal">IDEAL</span>
+                    <span class="settings-ai-badge risk-ideal">IDEAL</span>
                     <span class="settings-ai-rule">Ambas as pontuações igual a 0 — publicação automática</span>
                 </div>
                 <div class="settings-ai-input-wrap">
@@ -85,7 +65,7 @@
 
             <div class="settings-ai-row">
                 <div class="settings-ai-info">
-                    <span class="settings-ai-badge settings-ai-badge--low">BAIXO</span>
+                    <span class="settings-ai-badge risk-low">BAIXO</span>
                     <span class="settings-ai-rule">Ambas abaixo de</span>
                 </div>
                 <div class="settings-ai-input-wrap">
@@ -96,7 +76,7 @@
 
             <div class="settings-ai-row">
                 <div class="settings-ai-info">
-                    <span class="settings-ai-badge settings-ai-badge--medium">MÉDIO</span>
+                    <span class="settings-ai-badge risk-medium">MÉDIO</span>
                     <span class="settings-ai-rule">Ambas abaixo de</span>
                 </div>
                 <div class="settings-ai-input-wrap">
@@ -107,7 +87,7 @@
 
             <div class="settings-ai-row">
                 <div class="settings-ai-info">
-                    <span class="settings-ai-badge settings-ai-badge--high">ALTO</span>
+                    <span class="settings-ai-badge risk-high">ALTO</span>
                     <span class="settings-ai-rule">Ambas abaixo de</span>
                 </div>
                 <div class="settings-ai-input-wrap">
@@ -118,7 +98,7 @@
 
             <div class="settings-ai-row">
                 <div class="settings-ai-info">
-                    <span class="settings-ai-badge settings-ai-badge--trash">LIXO</span>
+                    <span class="settings-ai-badge risk-trash">LIXO</span>
                     <span class="settings-ai-rule">Qualquer pontuação acima do limiar alto — rejeição automática</span>
                 </div>
                 <span class="settings-ai-fixed">Automático</span>

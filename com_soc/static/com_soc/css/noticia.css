@@ -529,3 +529,50 @@
     .article-body p { font-size: 16px; }
     .article-title { font-size: clamp(1.4rem, 7vw, 1.9rem); }
 }
+
+/* ==========================================
+   Dark Theme — Noticia Page
+   ========================================== */
+
+/* Surface backgrounds */
+[data-theme="dark"] .article-body,
+[data-theme="dark"] .article-footer,
+[data-theme="dark"] .comments-section {
+    background-color: #16202d;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* article-body p uses var(--primary-dark) = #0d2137 — invisible on dark */
+[data-theme="dark"] .article-body p {
+    color: var(--text-dark);
+}
+
+/* Drop cap — change from --primary to --accent for visibility */
+[data-theme="dark"] .article-body p:first-child::first-letter {
+    color: var(--accent);
+}
+
+/* Comment section heading uses --primary-dark */
+[data-theme="dark"] .comments-header h2 {
+    color: var(--text-dark);
+}
+
+/* Comment text uses --primary-dark and --primary-light */
+[data-theme="dark"] .comment-author {
+    color: var(--text-dark);
+}
+
+[data-theme="dark"] .comment-body {
+    color: var(--gray-600);
+}
+
+/* Comment empty state heading */
+[data-theme="dark"] .comments-section .empty-state h3 {
+    color: var(--text-dark);
+}
+
+/* Comment input — background is var(--gray-50) which is overridden,
+   but the text color references var(--primary-dark) */
+[data-theme="dark"] .comment-textarea {
+    color: var(--text-dark);
+}

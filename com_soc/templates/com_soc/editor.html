@@ -11,8 +11,7 @@
     <!-- Pendentes -->
     <div class="editor-section">
         <div class="editor-section-header">
-            <h2 class="editor-section-title">Notícias Pendentes</h2>
-            <span class="editor-count">{{ pendentes|length }}</span>
+            <h2 class="editor-section-title">Notícias Pendentes - {{ pendentes|length }}</h2>
         </div>
 
         {% if pendentes %}
@@ -24,7 +23,7 @@
                     {% if news.autor %}<span>{{ news.autor.username }}</span>{% endif %}
                     {% if news.ai_evaluation %}
                     <button
-                        class="ai-risk-badge ai-risk-badge--{{ news.ai_evaluation.risk_level }}"
+                        class="ai-risk-badge risk-{{ news.ai_evaluation.risk_level }}"
                         data-evaluation="{{ news.ai_json|escape }}"
                         title="Ver avaliação AI"
                     >{{ news.ai_evaluation.risk_level|upper }}</button>
@@ -57,8 +56,7 @@
     <!-- Publicadas -->
     <div class="editor-section">
         <div class="editor-section-header">
-            <h2 class="editor-section-title">Notícias Publicadas</h2>
-            <span class="editor-count">{{ publicadas|length }}</span>
+            <h2 class="editor-section-title">Notícias Publicadas - {{ publicadas|length }}</h2>
         </div>
 
         {% if publicadas %}
