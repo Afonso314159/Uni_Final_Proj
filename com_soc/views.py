@@ -14,6 +14,7 @@ from .models import Noticia, Comentario, ImagemNoticia, Utilizador, Notificacao,
 from .forms import RegisterForm, NoticiaForm
 from .decorators import admin_required, sub_required, editor_required, authenticated_user
 from .utils import AI_score, email_verification_token, send_verification_email, create_notification
+from .tasks import evaluate_noticia_task
 import json
 
 
@@ -432,36 +433,7 @@ def create_noticia(request):
         noticia_obj.acesso = Noticia.Acesso.PUBLICO
         noticia_obj.save()
 
-        config = get_object_or_404(ModerationConfig, name="default")
-
-        evaluation = AI_score(noticia_obj, config)
-        noticia_obj.ai_evaluation = evaluation
-        risk_level = evaluation.get('risk_level', 'medium')
-
-        if risk_level == 'trash':
-            noticia_obj.delete()
-            message = f"A notícia '{noticia_obj.titulo}' foi rejeitada."
-            create_notification(noticia_obj.autor,message)
-            return JsonResponse({
-                "success": False,
-                "rejected": True,
-                "error": (
-                    "O teu artigo foi rejeitado automaticamente por não cumprir "
-                    "os critérios mínimos de qualidade e/ou conter conteúdo impróprio."
-                ),
-            })
-        elif risk_level == 'ideal':
-            noticia_obj.estado_publicacao = Noticia.EstadoPublicacao.PUBLICADA
-            noticia_obj.data_publicacao = timezone.now().date()
-            message = f"A notícia '{noticia_obj.titulo}' foi aceite e publicada."
-            create_notification(noticia_obj.autor,message)
-            
-        else:
-            noticia_obj.estado_publicacao = Noticia.EstadoPublicacao.PENDENTE
-            message = f"A notícia '{noticia_obj.titulo}' esta pendente a espera de revisao."
-            create_notification(noticia_obj.autor,message)
-
-        noticia_obj.save()
+        evaluate_noticia_task.delay(noticia_obj.id)
 
     for imagem in request.FILES.getlist("imagens"):
         ImagemNoticia.objects.create(noticia=noticia_obj, imagem=imagem)
