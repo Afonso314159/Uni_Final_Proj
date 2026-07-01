@@ -43,6 +43,7 @@ if (saveBtn) {
         const low    = document.querySelector('[name="low_threshold"]').value;
         const medium = document.querySelector('[name="medium_threshold"]').value;
         const high   = document.querySelector('[name="high_threshold"]').value;
+        const aiPrompt = document.querySelector('[name="ai_prompt"]').value;
 
         const response = await fetch('/com_soc/save_config/', {
             method: 'POST',
@@ -55,6 +56,7 @@ if (saveBtn) {
                 low_threshold:    low,
                 medium_threshold: medium,
                 high_threshold:   high,
+                ai_prompt:        aiPrompt,
             }),
         });
 

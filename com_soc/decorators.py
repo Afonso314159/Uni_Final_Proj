@@ -40,3 +40,6 @@ def admin_required(view_func):
             return redirect('home')
         return view_func(request, *args, **kwargs)
     return wrapper
+
+
+

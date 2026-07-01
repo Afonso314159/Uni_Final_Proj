@@ -50,6 +50,20 @@
             Define os limiares que classificam o nível de risco de cada artigo submetido.
             Os valores aplicam-se a ambas as pontuações (fake e abusivo).
         </p>
+        
+
+        <div class="settings-ai-prompt-block">
+            <div class="settings-row-info">
+                <span class="settings-row-label">Prompt da IA</span>
+                <span class="settings-row-desc">
+                    Texto enviado à IA para avaliar cada notícia submetida. 
+                    Importante: o prompt deve instruir a IA a responder em JSON com os campos 
+                    "fake_score", "abusive_score", "reasons" e "recommendation", 
+                    caso contrário a avaliação falha e a notícia vai para revisão manual.
+                </span>
+            </div>
+            <textarea class="settings-ai-textarea" name="ai_prompt" rows="8" placeholder="Escreve aqui o prompt enviado à IA...">{{ moderation_config.ai_prompt }}</textarea>
+        </div>
 
         <div class="settings-ai-grid">
             <div class="settings-ai-row">

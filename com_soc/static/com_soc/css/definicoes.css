@@ -223,3 +223,32 @@
 [data-theme="dark"] .settings-ai-input {
     background-color: #16202d;
 }
+
+.settings-ai-prompt-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.settings-ai-textarea {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 1.5px solid var(--gray-100);
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: 0.875rem;
+    color: var(--text-dark);
+    line-height: 1.5;
+    resize: vertical;
+    transition: border-color var(--transition-fast);
+}
+
+.settings-ai-textarea:focus {
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(91, 163, 217, 0.15);
+}
+
+[data-theme="dark"] .settings-ai-textarea {
+    background-color: #16202d;
+}
