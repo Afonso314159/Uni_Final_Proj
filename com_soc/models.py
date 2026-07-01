@@ -126,8 +126,6 @@ class Noticia(models.Model):
         choices=EstadoPublicacao.choices,
         default=EstadoPublicacao.PENDENTE
     )
-    # Full AI evaluation result stored as JSON.
-    # Structure: { fake_score, abusive_score, risk_level, reasons, recommendation }
     ai_evaluation = models.JSONField(null=True, blank=True)
     acesso = models.CharField(max_length=20, choices=Acesso.choices)
     categoria_1 = models.CharField(max_length=20, choices=Categoria.choices, null=True, blank=True)
