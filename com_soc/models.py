@@ -17,16 +17,8 @@ class Utilizador(AbstractUser):
         BLOQUEADA = 'Bloqueada', 'Bloqueada'
         ELIMINADO = 'Eliminado', 'Eliminado'
 
-    role = models.CharField(
-        max_length=20,
-        choices=Role.choices,
-        default=Role.REGISTADO
-    )
-    estado = models.CharField(
-        max_length=20,
-        choices=Estado.choices,
-        default=Estado.POR_ATIVAR
-    )
+    role = models.CharField(max_length=20,choices=Role.choices,default=Role.REGISTADO)
+    estado = models.CharField(max_length=20,choices=Estado.choices,default=Estado.POR_ATIVAR)
 
     email = models.EmailField(unique=True)
     profile_picture = models.ImageField(upload_to='avatars/', null=True, blank=True)
@@ -50,24 +42,11 @@ class Subscricao(models.Model):
         MENSAL = 'mensal', 'Mensal'
         ANUAL  = 'anual',  'Anual'
 
-    utilizador = models.ForeignKey(
-        Utilizador,
-        on_delete=models.CASCADE,
-        related_name='subscricoes'
-    )
-    plano = models.CharField(
-        max_length=10,
-        choices=Plano.choices,
-        null=True,
-        blank=True
-    )
+    utilizador = models.ForeignKey(Utilizador,on_delete=models.CASCADE,related_name='subscricoes')
+    plano = models.CharField(max_length=10,choices=Plano.choices,null=True,blank=True)
     data_inicio = models.DateField(null=True, blank=True)
     data_fim    = models.DateField(null=True, blank=True)
-    estado = models.CharField(
-        max_length=20,
-        choices=Estado.choices,
-        default=Estado.PENDENTE,
-    )
+    estado = models.CharField(max_length=20,choices=Estado.choices,default=Estado.PENDENTE,)
     preco = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
 
     # Stripe fields (new)
@@ -82,13 +61,7 @@ class Subscricao(models.Model):
     
     @property
     def tem_acesso(self):
-        return (
-            self.estado == self.Estado.ATIVA or (
-                self.estado == self.Estado.CANCELADA and
-                self.data_fim is not None and
-                self.data_fim >= date.today()
-            )
-        )
+        return (self.estado == self.Estado.ATIVA or (self.estado == self.Estado.CANCELADA and self.data_fim is not None and self.data_fim >= date.today()))
 
 
 class Noticia(models.Model):
@@ -121,30 +94,15 @@ class Noticia(models.Model):
     corpo_texto = models.TextField()
     data_criacao = models.DateField(auto_now_add=True)
     data_publicacao = models.DateField(null=True, blank=True)
-    estado_publicacao = models.CharField(
-        max_length=20,
-        choices=EstadoPublicacao.choices,
-        default=EstadoPublicacao.PENDENTE
-    )
+    estado_publicacao = models.CharField(max_length=20,choices=EstadoPublicacao.choices,default=EstadoPublicacao.PENDENTE)
     ai_evaluation = models.JSONField(null=True, blank=True)
     acesso = models.CharField(max_length=20, choices=Acesso.choices)
     categoria_1 = models.CharField(max_length=20, choices=Categoria.choices, null=True, blank=True)
     categoria_2 = models.CharField(max_length=20, choices=Categoria.choices, null=True, blank=True)
     categoria_3 = models.CharField(max_length=20, choices=Categoria.choices, null=True, blank=True)
     origem_noticia = models.CharField(max_length=20, choices=OrigemNoticia.choices, null=True, blank=True)
-    editor_aprovador = models.ForeignKey(
-        Utilizador,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='noticias_aprovadas'
-    )
-    autor = models.ForeignKey(
-        Utilizador,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='noticias_escritas'
-    )
+    editor_aprovador = models.ForeignKey(Utilizador,on_delete=models.SET_NULL, null=True,blank=True,related_name='noticias_aprovadas')
+    autor = models.ForeignKey(Utilizador,on_delete=models.SET_NULL,null=True,related_name='noticias_escritas')
 
     def __str__(self):
         return self.titulo
