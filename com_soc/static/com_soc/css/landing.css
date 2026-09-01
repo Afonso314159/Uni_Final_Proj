@@ -16,7 +16,7 @@ body.landing-page { background-color: var(--gray-50); }
 .news-grid {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
-    grid-template-rows: auto auto;
+    align-items: stretch; /* side columns now match the featured column's height */
     gap: var(--spacing-lg);
     margin-bottom: var(--spacing-xl);
 }
@@ -39,7 +39,9 @@ body.landing-page { background-color: var(--gray-50); }
     cursor: pointer;
     text-decoration: none;
     color: inherit;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    flex: 1; /* fills the stretched column height instead of leaving a gap below */
 }
 
 .news-card:hover {
@@ -47,7 +49,28 @@ body.landing-page { background-color: var(--gray-50); }
     box-shadow: var(--shadow-hover);
 }
 
-.news-card-content { padding: var(--spacing-md); }
+.news-card-image {
+    width: 100%;
+    height: 130px;
+    background-color: var(--gray-100);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.news-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.news-card-content {
+    padding: var(--spacing-md);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* centers title+text in taller cards instead of hugging the top */
+}
 
 .news-card h3 {
     font-size: 1rem;
@@ -71,7 +94,6 @@ body.landing-page { background-color: var(--gray-50); }
    Featured News (Centre column)
    ========================================== */
 .featured-news {
-    grid-row: span 2;
     background: var(--white);
     border-radius: var(--radius-xl);
     overflow: hidden;
@@ -166,7 +188,6 @@ body.landing-page { background-color: var(--gray-50); }
 
     .featured-news {
         grid-column: span 2;
-        grid-row: span 1;
     }
 
     .side-column {
@@ -175,6 +196,7 @@ body.landing-page { background-color: var(--gray-50); }
     }
 
     .news-card { flex: 1 1 calc(50% - 0.75rem); min-width: 200px; }
+    .news-card-image { height: 100px; }
 }
 
 @media (max-width: 600px) {
@@ -184,6 +206,7 @@ body.landing-page { background-color: var(--gray-50); }
     .side-column { flex-direction: column; }
     .news-card { flex: 1 1 100%; }
     .featured-image { height: 200px; }
+    .news-card-image { height: 90px; }
 }
 
 /* ==========================================
