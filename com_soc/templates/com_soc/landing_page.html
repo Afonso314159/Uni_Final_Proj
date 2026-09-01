@@ -21,11 +21,6 @@
             <div class="side-column">
                 {% for news in side_news|slice:":2" %}
                 <a href="{% url 'register' %}" class="news-card">
-                    {% if news.imagens.first %}
-                    <div class="news-card-image">
-                        <img src="{{ news.imagens.first.imagem.url }}" alt="{{ news.titulo }}">
-                    </div>
-                    {% endif %}
                     <div class="news-card-content">
                         <h3>{{ news.titulo }}</h3>
                         <p>{{ news.corpo_texto|truncatewords:20 }}</p>
@@ -56,11 +51,6 @@
             <div class="side-column">
                 {% for news in side_news|slice:"2:4" %}
                 <a href="{% url 'register' %}" class="news-card">
-                    {% if news.imagens.first %}
-                    <div class="news-card-image">
-                        <img src="{{ news.imagens.first.imagem.url }}" alt="{{ news.titulo }}">
-                    </div>
-                    {% endif %}
                     <div class="news-card-content">
                         <h3>{{ news.titulo }}</h3>
                         <p>{{ news.corpo_texto|truncatewords:20 }}</p>
